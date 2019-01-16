@@ -16,7 +16,7 @@ Documentation
 -----------------------------
 The documentation is available at the URL below.
 
-http://as-capabl.github.io/clay-dhall/html/
+https://as-capabl.github.io/clay-dhall/html/clay-dhall/index.html
 
 
 Current Status
