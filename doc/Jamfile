@@ -1,0 +1,7 @@
+import doxygen ;
+
+doxygen.init ;
+doxygen clay-dhall.html
+    : ../README.md [ glob ../include/clay-dhall/*.h ] ../csrc/clay.c
+    : <doxygen:param>PROJECT_NAME=clay-dhall
+    ;
