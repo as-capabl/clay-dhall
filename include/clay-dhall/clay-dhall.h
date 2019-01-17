@@ -13,10 +13,14 @@ extern "C" {
 #include "stdbool.h"
 #include "type.h"
 
-#ifdef CDHALL_DLL_IMPL
-#define DLL_EXPORT __declspec(dllexport)
+#ifdef __MINGW32__
+#  ifdef CDHALL_DLL_IMPL
+#    define DLL_EXPORT __declspec(dllexport)
+#  else
+#    define DLL_EXPORT __declspec(dllimport)
+#  endif
 #else
-#define DLL_EXPORT __declspec(dllimport)
+#  define DLL_EXPORT
 #endif
 
 
