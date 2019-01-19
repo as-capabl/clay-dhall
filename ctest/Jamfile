@@ -1,7 +1,11 @@
 import testing ;
 
-unit-test type
-    : ..//claydhall_test_link type.c
+unit-test type_simple
+    : ..//claydhall_test_link type_simple.c
+    ;
+
+unit-test type_compound
+    : ..//claydhall_test_link type_compound.c
     ;
 
 unit-test exec
