@@ -5,6 +5,7 @@
 #include <clay-dhall/clay-dhall.h>
 #include "Clay/Export_stub.h"
 
+cdhall_objptr  g_lasterror = NULL;
 
 DLL_EXPORT void cdhall_init(int* argc, char** argv[])
 {
@@ -13,6 +14,7 @@ DLL_EXPORT void cdhall_init(int* argc, char** argv[])
 
 DLL_EXPORT void cdhall_exit()
 {
+    if (g_lasterror) cdhall_free_object(g_lasterror);
     hs_exit();
 }
 

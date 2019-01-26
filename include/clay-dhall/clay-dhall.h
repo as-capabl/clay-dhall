@@ -69,6 +69,16 @@ DLL_EXPORT bool cdhall_call_func(const cdhall_objptr ptr, const void* arg, void*
 /* \} */
 
 /*! -------------------
+    \defgroup group_error Getting error message
+ */
+/* \{ */
+
+
+
+/* \} */
+
+
+/*! -------------------
     \defgroup group_exec Dhall execution
  */
 /* \{ */
@@ -77,7 +87,13 @@ DLL_EXPORT bool cdhall_input(const char* str, cdhall_typed_ptr holder);
 
 DLL_EXPORT bool cdhall_input_with_settings(cdhall_objptr stg, const char* str, cdhall_typed_ptr holder);
 
+// DLL_EXPORT bool cdhall_input_file(const char* str, cdhall_typed_ptr holder);
+
+// DLL_EXPORT bool cdhall_input_file_with_settings(cdhall_objptr stg, const char* str, cdhall_typed_ptr holder);
+
 DLL_EXPORT cdhall_objptr cdhall_input_expr(const char* str);
+
+// DLL_EXPORT cdhall_objptr cdhall_input_expr_with_setting(cdhall_objptr stg, const char* str);
 
 DLL_EXPORT bool cdhall_extract(cdhall_objptr ptr, cdhall_typed_ptr holder);
 
