@@ -4,4 +4,6 @@ doxygen.init ;
 doxygen clay-dhall.html
     : ../README.md [ glob ../include/clay-dhall/*.h ] ../csrc/clay.c
     : <doxygen:param>PROJECT_NAME=clay-dhall
+      <doxygen:param>EXAMPLE_PATH=../ctest
+      <doxygen:param>WARN_IF_UNDOCUMENTED=NO
     ;

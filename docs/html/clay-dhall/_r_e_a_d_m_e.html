@@ -67,18 +67,93 @@ $(function() {
 <div class="contents">
 <div class="textblock"><p>C layer for Dhall language</p>
 <h2>Description </h2>
-<p>Dhall, developed by Gabriel Gonzalez, is strictly typed, deterministic (not turing complete) programming language.</p>
-<p>This library is a C binding of Dhall, which calls the Haskell implementation of Dhall via FFI. Dhall values are mapped into C memory representation described by <em>spec</em> structure.</p>
+<p>Dhall(<a href="https://github.com/dhall-lang/dhall-lang">https://github.com/dhall-lang/dhall-lang</a>), developed by Gabriel Gonzalez, is strictly typed, deterministic (not turing complete) computer language. Dhall is a good language to describe data, configuration, and so on.</p>
+<p>This library is a C binding of Dhall, which calls the Haskell implementation of Dhall via FFI. Dhall values are mapped directly into C memory representation described by the <em>spec</em> structure.</p>
 <h2>Documentation </h2>
 <p>The documentation is available at the URL below.</p>
-<p><a href="http://as-capabl.github.com/clay-dhall/">http://as-capabl.github.com/clay-dhall/</a></p>
+<p><a href="https://as-capabl.github.io/clay-dhall/html/clay-dhall/index.html">https://as-capabl.github.io/clay-dhall/html/clay-dhall/index.html</a></p>
 <h2>Current Status </h2>
 <p>Working toward the 1st release.</p>
 <ul>
-<li>[ ] Add APIs to get error messages</li>
-<li>[ ] Eliminate <code>undefined</code>s for InputTypes</li>
-<li>[ ] documentation </li>
+<li>[ ] APIs to get error messages</li>
+<li>[ ] PerformGC API</li>
+<li>[ ] Full documentation</li>
+<li>[ ] Installation <hr/>
+</li>
+<li>[x] data EvaluateSettings</li>
+<li>[x] data InputSettings</li>
+<li>[x] data InputType a<ul>
+<li>[x] embed</li>
+<li>[ ] declared</li>
 </ul>
+</li>
+<li>[ ] data InterpretOptions</li>
+<li>[ ] data InvalidType</li>
+<li>[x] newtype RecordInputType a</li>
+<li>[x] newtype RecordType a</li>
+<li>[ ] data Type a<ul>
+<li>[x] extract</li>
+<li>[ ] expected</li>
+</ul>
+</li>
+<li>[x] auto :: Interpret a =&gt; Type a</li>
+<li>[x] bool :: Type Bool</li>
+<li>[x] defaultEvaluateSettings :: EvaluateSettings</li>
+<li>[x] defaultInputSettings :: InputSettings</li>
+<li>[ ] defaultInterpretOptions :: InterpretOptions</li>
+<li>[ ] detailed :: IO a -&gt; IO a</li>
+<li>[x] double :: Type Double</li>
+<li>[x] field :: Text -&gt; Type a -&gt; RecordType a</li>
+<li>[x] genericAuto ::</li>
+<li>[ ] inject :: Inject a =&gt; InputType a<ul>
+<li>Contains <code>undefined</code>s</li>
+</ul>
+</li>
+<li>[x] input :: Type a -&gt; Text -&gt; IO a</li>
+<li>[x] inputExpr ::</li>
+<li>[ ] inputExprWithSettings ::</li>
+<li>[x] inputField :: Inject a =&gt; Text -&gt; RecordInputType a</li>
+<li>[x] inputFieldWith :: Text -&gt; InputType a -&gt; RecordInputType a</li>
+<li>[ ] inputFile :: Type a -&gt; FilePath -&gt; IO a</li>
+<li>[ ] inputFileWithSettings ::</li>
+<li>[x] inputRecord :: RecordInputType a -&gt; InputType a</li>
+<li>[x] inputWithSettings :: InputSettings -&gt; Type a -&gt; Text -&gt; IO a</li>
+<li>[x] integer :: Type Integer</li>
+<li>ns lazyText :: Type Data.Text.Internal.Lazy.Text</li>
+<li>ns list :: Type a -&gt; Type [a]</li>
+<li>[x] Dhall.maybe :: Type a -&gt; Type (Maybe a)</li>
+<li>[x] natural :: Type Natural</li>
+<li>[x] normalizer ::<ul>
+<li>(Only through dhall_add_builtin)</li>
+</ul>
+</li>
+<li>ns pair :: Type a -&gt; Type b -&gt; Type (a, b)</li>
+<li>[ ] rawInput ::</li>
+<li>[x] record :: RecordType a -&gt; Type a</li>
+<li>[ ] rootDirectory ::</li>
+<li>[ ] scientific :: Type scientific-0.3.6.2:Data.Scientific.Scientific</li>
+<li>ns Dhall.sequence :: Type a -&gt; Type (Seq a)</li>
+<li>[ ] sourceName ::</li>
+<li>[ ] standardVersion ::</li>
+<li>[x] startingContext ::<ul>
+<li>(Only through dhall_add_builtin)</li>
+</ul>
+</li>
+<li>[x] strictText :: Type Text</li>
+<li>ns string :: Type String</li>
+<li>[x] unit :: Type ()</li>
+<li>[x] vector :: Type a -&gt; Type (Vector a)</li>
+<li>[ ] Expr</li>
+</ul>
+<p>ns = not supported</p>
+<h2>How to build </h2>
+<p>Requirements:</p>
+<ul>
+<li>Haskell stack (<a href="https://docs.haskellstack.org/en/stable/README/">https://docs.haskellstack.org/en/stable/README/</a>)</li>
+<li>Boost build v2 (<a href="https://www.boost.org/doc/libs/1_50_0/tools/build/v2/index.html">https://www.boost.org/doc/libs/1_50_0/tools/build/v2/index.html</a>)</li>
+</ul>
+<p>The following executes the test suite.</p>
+<div class="fragment"><div class="line">$ stack build</div><div class="line">$ cd ctest</div><div class="line">$ bjam</div></div><!-- fragment --><p>Installation for production is not yet implemented. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -3,7 +3,21 @@
 /*!
 \mainpage
 
-\copydoc README
+\section MainpageDescription Description
+Dhall(https://github.com/dhall-lang/dhall-lang), developed by Gabriel Gonzalez, is strictly typed, deterministic (not turing complete) computer language.
+Dhall is a good language to describe data, configuration, and so on.
+
+This library is a C binding of Dhall, which calls the Haskell implementation of Dhall via FFI.
+Dhall values are mapped directly into C memory representation described by the *spec* structure.
+
+
+\section MainpageTutorial Tutorial
+\dontinclude type_simple.c
+
+See this example;
+\skip main
+\until return 0
+\until }
 */
 
 #ifdef __cplusplus

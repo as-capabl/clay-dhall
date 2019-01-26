@@ -1,6 +1,6 @@
-#include "assert.h"
-#include "string.h"
-#include "stddef.h"
+#include <assert.h>
+#include <string.h>
+#include <stddef.h>
 #include <clay-dhall/clay-dhall.h>
 #include <clay-dhall/macro.h>
 
