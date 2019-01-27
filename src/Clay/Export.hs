@@ -13,9 +13,11 @@ import Control.Monad.State
 import Control.Monad.Identity
 import Control.Monad.IO.Class
 
+import Foreign.C.Types (CChar)
 import Foreign.C.String
 import Foreign.Ptr
 import Foreign.ForeignPtr
+import Foreign.ForeignPtr.Unsafe
 import Foreign.Storable
 import Foreign.Marshal
 import Foreign.StablePtr
@@ -32,6 +34,7 @@ import Control.Lens
 
 import qualified Dhall as Dh
 import qualified Dhall.Core as DhC
+import qualified Dhall.Parser as DhP
 import qualified Dhall.TypeCheck as DhTC
 import qualified Dhall.Context as DhCtx
 
@@ -40,8 +43,8 @@ import Clay.Obj
 
 
 data ErrorInfo = ErrorInfo {
-    getErrorNo :: CDhallInt,
-    getErrorStr :: B.ByteString
+    getErrorNo :: ErrorCode,
+    getErrorStr :: ForeignPtr CChar
   }
 
 foreign import ccall "&g_lasterror" gLastError :: Ptr (StablePtr ErrorInfo)
@@ -51,27 +54,51 @@ exceptionGuard act =
     (act >> return True) `Ex.catches` handlers
   where
     handlers = [
-        Ex.Handler $ \e -> putE 0 (e :: Dh.InvalidType),
-        Ex.Handler $ \e -> putE 0 (e :: Ex.ArithException)
+        Ex.Handler $ \e -> putE eCDHALL_ERROR_INVALID_TYPE (e :: Dh.InvalidType),
+        Ex.Handler $ \e -> putE eCDHALL_ERROR_INVALID_TYPE (e :: DhTC.TypeError DhP.Src DhTC.X),
+        Ex.Handler $ \e -> putE (arithErrorCode e) (e :: Ex.ArithException)
       ]
-    putE :: Ex.Exception e => CDhallInt -> e -> IO Bool  
+    putE :: Ex.Exception e => ErrorCode -> e -> IO Bool  
     putE n e =
       do
         cleanLastError
-        sptr <- newStablePtr $ ErrorInfo n (T.encodeUtf8 $ T.pack $ Ex.displayException e)
+        frgn <- foreignCStr $ Ex.displayException e
+        sptr <- newStablePtr $ ErrorInfo n frgn
         poke gLastError sptr
         return False
-
     cleanLastError =
       do
         sptr  <- peek gLastError
         if sptr /= castPtrToStablePtr nullPtr
             then freeStablePtr sptr
             else return ()
+    foreignCStr str =
+      do
+        cstr <- newCString str
+        newForeignPtr finalizerFree cstr
+
+    arithErrorCode Ex.Overflow = eCDHALL_ERROR_ARITH_OVERFLOW
+    arithErrorCode Ex.Underflow = eCDHALL_ERROR_ARITH_UNDERFLOW
+    arithErrorCode Ex.LossOfPrecision = eCDHALL_ERROR_ARITH_LOSS_OF_PRECISION 
+    arithErrorCode Ex.DivideByZero = eCDHALL_ERROR_ARITH_DIVIDE_BY_ZERO 
+    arithErrorCode Ex.Denormal = eCDHALL_ERROR_ARITH_DENORMAL 
+    arithErrorCode Ex.RatioZeroDenominator = eCDHALL_ERROR_ARITH_RATIO_ZERO_DENOMINATOR
         
+foreign export ccall hsc_last_error_code :: IO ErrorCode
+hsc_last_error_code =
+  do
+    sptr <- peek gLastError
+    ei <- deRefStablePtr sptr
+    return $ getErrorNo ei
 
-
-
+foreign export ccall hsc_last_error_message :: IO CString
+hsc_last_error_message =
+  do
+    sptr <- peek gLastError
+    ei <- deRefStablePtr sptr
+    return $
+        unsafeForeignPtrToPtr $ getErrorStr ei
+    
 --
 -- Exported functions
 --
@@ -100,9 +127,8 @@ hsc_input cs p =
     !s <- T.decodeUtf8 <$> B.unsafePackCString cs
 
     t <- asHolderType p
-    join $ Dh.input t s 
-    
-    return True
+    exceptionGuard $
+        join $ Dh.input t s 
 
 foreign export ccall hsc_input_with_settings :: StablePtr Obj -> CString -> Ptr CDhallTypedPtr -> IO Bool
 hsc_input_with_settings spStg cs p =

@@ -118,6 +118,8 @@ typedef enum {
  */
 /* \{ */
 typedef enum {
+    CDHALL_ERROR_EMPTY,
+
     // Dhall.InvalidType
     CDHALL_ERROR_INVALID_TYPE,
 

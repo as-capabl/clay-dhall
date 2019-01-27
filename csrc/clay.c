@@ -45,12 +45,12 @@ DLL_EXPORT bool cdhall_call_func(const cdhall_objptr ptr, const void* arg, void*
 
 DLL_EXPORT cdhall_error_code cdhall_last_error_code()
 {
-    return 0;
+    return hsc_last_error_code();
 }
 
 DLL_EXPORT const char* cdhall_last_error_message()
 {
-    return NULL;
+    return hsc_last_error_message();
 }
 
 
