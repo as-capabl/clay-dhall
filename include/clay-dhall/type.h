@@ -106,6 +106,31 @@ typedef enum {
 
 /*! \} */
 
+/*! -------------------
+    \defgroup group_error_notif Error Notifications.
+
+    \note This library do not handle unknown exception.
+
+    APIs throw exceptions in some cases like below.
+
+    - Exception thrown by builtin function
+    - Exception via -fnon-call-exceptions
+ */
+/* \{ */
+typedef enum {
+    // Dhall.InvalidType
+    CDHALL_ERROR_INVALID_TYPE,
+
+    // ArithException
+    CDHALL_ERROR_ARITH_OVERFLOW, // Overflow	 
+    CDHALL_ERROR_ARITH_UNDERFLOW, // Underflow	 
+    CDHALL_ERROR_ARITH_LOSS_OF_PRECISION, // LossOfPrecision	 
+    CDHALL_ERROR_ARITH_DIVIDE_BY_ZERO, // DivideByZero	 
+    CDHALL_ERROR_ARITH_DENORMAL, // Denormal	 
+    CDHALL_ERROR_ARITH_RATIO_ZERO_DENOMINATOR, // RatioZeroDenominator
+} cdhall_error_code;
+/*! \} */
+
 //
 // Managed objects
 //

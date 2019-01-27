@@ -15,3 +15,8 @@ unit-test exec
 unit-test add_builtin
     : ..//claydhall_test_link add_builtin.c
     ;
+
+unit-test error_handling
+    : ..//claydhall_test_link error_handling.c
+    ;
+

@@ -43,6 +43,17 @@ DLL_EXPORT bool cdhall_call_func(const cdhall_objptr ptr, const void* arg, void*
     return hsc_call_func((HsStablePtr)ptr, (void*)arg, dest) != HS_BOOL_FALSE;
 }
 
+DLL_EXPORT cdhall_error_code cdhall_last_error_code()
+{
+    return 0;
+}
+
+DLL_EXPORT const char* cdhall_last_error_message()
+{
+    return NULL;
+}
+
+
 DLL_EXPORT bool cdhall_input(const char* str, cdhall_typed_ptr holder)
 {
     return hsc_input((HsPtr)str, (HsPtr)&holder) != HS_BOOL_FALSE;

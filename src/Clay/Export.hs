@@ -20,6 +20,7 @@ import Foreign.Storable
 import Foreign.Marshal
 import Foreign.StablePtr
 import System.IO.Unsafe
+import qualified Control.Exception as Ex
 
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Unsafe as B
@@ -36,6 +37,40 @@ import qualified Dhall.Context as DhCtx
 
 import Clay.Type
 import Clay.Obj
+
+
+data ErrorInfo = ErrorInfo {
+    getErrorNo :: CDhallInt,
+    getErrorStr :: B.ByteString
+  }
+
+foreign import ccall "&g_lasterror" gLastError :: Ptr (StablePtr ErrorInfo)
+
+exceptionGuard :: (IO ()) -> IO Bool
+exceptionGuard act =
+    (act >> return True) `Ex.catches` handlers
+  where
+    handlers = [
+        Ex.Handler $ \e -> putE 0 (e :: Dh.InvalidType),
+        Ex.Handler $ \e -> putE 0 (e :: Ex.ArithException)
+      ]
+    putE :: Ex.Exception e => CDhallInt -> e -> IO Bool  
+    putE n e =
+      do
+        cleanLastError
+        sptr <- newStablePtr $ ErrorInfo n (T.encodeUtf8 $ T.pack $ Ex.displayException e)
+        poke gLastError sptr
+        return False
+
+    cleanLastError =
+      do
+        sptr  <- peek gLastError
+        if sptr /= castPtrToStablePtr nullPtr
+            then freeStablePtr sptr
+            else return ()
+        
+
+
 
 --
 -- Exported functions
