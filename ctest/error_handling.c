@@ -10,6 +10,10 @@ int main()
 {
     cdhall_init(NULL, NULL);
     
+    // Initial state
+    assert(cdhall_last_error_code() == CDHALL_ERROR_EMPTY);
+    assert(cdhall_last_error_message() == NULL);
+
     // Type error ----
     char* str = NULL;
     assert(!cdhall_input("+1", CDHALL_TPTR_SIMPLE(&str)));

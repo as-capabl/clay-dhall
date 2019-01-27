@@ -83,21 +83,28 @@ exceptionGuard act =
     arithErrorCode Ex.DivideByZero = eCDHALL_ERROR_ARITH_DIVIDE_BY_ZERO 
     arithErrorCode Ex.Denormal = eCDHALL_ERROR_ARITH_DENORMAL 
     arithErrorCode Ex.RatioZeroDenominator = eCDHALL_ERROR_ARITH_RATIO_ZERO_DENOMINATOR
-        
+
+getErrorInfo :: IO (Maybe ErrorInfo)
+getErrorInfo =
+  do
+    sptr <- peek gLastError
+    if sptr /= castPtrToStablePtr nullPtr
+        then Just <$> deRefStablePtr sptr
+        else return Nothing
+
 foreign export ccall hsc_last_error_code :: IO ErrorCode
 hsc_last_error_code =
   do
-    sptr <- peek gLastError
-    ei <- deRefStablePtr sptr
-    return $ getErrorNo ei
+    mei <- getErrorInfo
+    return $
+        maybe eCDHALL_ERROR_EMPTY getErrorNo mei
 
 foreign export ccall hsc_last_error_message :: IO CString
 hsc_last_error_message =
   do
-    sptr <- peek gLastError
-    ei <- deRefStablePtr sptr
+    mei <- getErrorInfo
     return $
-        unsafeForeignPtrToPtr $ getErrorStr ei
+        maybe nullPtr (unsafeForeignPtrToPtr . getErrorStr) mei
     
 --
 -- Exported functions
