@@ -20,3 +20,10 @@ unit-test error_handling
     : ..//claydhall_test_link error_handling.c
     ;
 
+run ..//claydhall_test_link input_file.c
+    :
+    : ../ctest-input/input1.dhall
+    :
+    : input_file
+    ;
+

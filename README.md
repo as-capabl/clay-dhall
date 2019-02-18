@@ -1,4 +1,4 @@
-clay-dhall {#README}
+clay-dhall
 =============================
 
 C layer for Dhall language

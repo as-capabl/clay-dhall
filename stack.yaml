@@ -44,6 +44,7 @@ extra-deps:
 - megaparsec-7.0.4
 - repline-0.2.0.0
 - serialise-0.2.1.0
+- dhall-json-1.2.6
 
 
 # Override default flag values for local packages and extra-deps
