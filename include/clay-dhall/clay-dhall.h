@@ -89,9 +89,9 @@ DLL_EXPORT bool cdhall_input(const char* str, cdhall_typed_ptr holder);
 
 DLL_EXPORT bool cdhall_input_with_settings(cdhall_objptr stg, const char* str, cdhall_typed_ptr holder);
 
-// DLL_EXPORT bool cdhall_input_file(const char* str, cdhall_typed_ptr holder);
+DLL_EXPORT bool cdhall_input_file(const char* fileName, cdhall_typed_ptr holder);
 
-// DLL_EXPORT bool cdhall_input_file_with_settings(cdhall_objptr stg, const char* str, cdhall_typed_ptr holder);
+DLL_EXPORT bool cdhall_input_file_with_settings(cdhall_objptr stg, const char* fileName, cdhall_typed_ptr holder);
 
 DLL_EXPORT cdhall_objptr cdhall_input_expr(const char* str);
 

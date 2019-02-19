@@ -144,9 +144,30 @@ hsc_input_with_settings spStg cs p =
     stg <- objToInputSettings <$> deRefStablePtr spStg
 
     t <- asHolderType p
-    join $ Dh.inputWithSettings stg t s 
-    
-    return True
+    exceptionGuard $
+        join $ Dh.inputWithSettings stg t s 
+
+
+foreign export ccall hsc_input_file :: CString -> Ptr CDhallTypedPtr -> IO Bool
+hsc_input_file cs p =
+    do
+    !s <- T.decodeUtf8 <$> B.unsafePackCString cs
+
+    t <- asHolderType p
+    exceptionGuard $
+        join $ Dh.inputFile t (T.unpack s)
+
+
+foreign export ccall hsc_input_file_with_settings :: StablePtr Obj -> CString -> Ptr CDhallTypedPtr -> IO Bool
+hsc_input_file_with_settings spStg cs p =
+    do
+    !s <- T.decodeUtf8 <$> B.unsafePackCString cs
+    stg <- objToEvaluateSettings <$> deRefStablePtr spStg
+
+    t <- asHolderType p
+    exceptionGuard $
+        join $ Dh.inputFileWithSettings stg t (T.unpack s)
+
 
 foreign export ccall hsc_input_expr :: CString -> IO (StablePtr Obj)
 hsc_input_expr cs =

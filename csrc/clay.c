@@ -64,6 +64,16 @@ DLL_EXPORT bool cdhall_input_with_settings(cdhall_objptr stg, const char* str, c
     return hsc_input_with_settings((HsStablePtr)stg, (HsPtr)str, (HsPtr)&holder) != HS_BOOL_FALSE;
 }
 
+DLL_EXPORT bool cdhall_input_file(const char* fileName, cdhall_typed_ptr holder)
+{
+    return hsc_input_file((HsPtr)fileName, (HsPtr)&holder) != HS_BOOL_FALSE;
+}
+
+DLL_EXPORT bool cdhall_input_file_with_settings(cdhall_objptr stg, const char* fileName, cdhall_typed_ptr holder)
+{
+    return hsc_input_file_with_settings((HsStablePtr)stg, (HsPtr)fileName, (HsPtr)&holder) != HS_BOOL_FALSE;
+}
+
 
 DLL_EXPORT cdhall_objptr cdhall_input_expr(const char* str)
 {
