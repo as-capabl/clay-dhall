@@ -23,7 +23,7 @@ Current Status
 -----------------------------
 Working toward the 1st release.
 
-- [ ] APIs to get error messages
+- [x] APIs to get error messages
 - [ ] PerformGC API
 - [ ] Full documentation
 - [ ] Installation
@@ -58,8 +58,8 @@ Working toward the 1st release.
 - [ ] inputExprWithSettings ::
 - [x] inputField :: Inject a => Text -> RecordInputType a
 - [x] inputFieldWith :: Text -> InputType a -> RecordInputType a
-- [ ] inputFile :: Type a -> FilePath -> IO a
-- [ ] inputFileWithSettings ::
+- [x] inputFile :: Type a -> FilePath -> IO a
+- [x] inputFileWithSettings ::
 - [x] inputRecord :: RecordInputType a -> InputType a
 - [x] inputWithSettings :: InputSettings -> Type a -> Text -> IO a
 - [x] integer :: Type Integer
