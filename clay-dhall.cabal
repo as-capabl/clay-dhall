@@ -18,24 +18,6 @@ source-repository head
   type: git
   location: https://github.com/as-capabl/clay-dhall
 
-library
-  exposed-modules:
-      Lib
-  other-modules:
-      Paths_clay_dhall
-  hs-source-dirs:
-      src
-  build-depends:
-      base >=4.7 && <5
-    , text
-    , bytestring
-    , vector
-    , contravariant
-    , mtl
-    , lens
-    , dhall >= 1.19 && < 2
-  default-language: Haskell2010
-
 foreign-library clay-dhall
   type:
     native-shared
@@ -49,10 +31,16 @@ foreign-library clay-dhall
     , Clay.Export
   include-dirs:
       include
+  includes:
+      clay-dhall/clay-dhall.h
+    , clay-dhall/type.h
+    , clay-dhall/macro.h
   c-sources:
       csrc/clay.c
-  install-includes:
-      clay-dhall/*
+--  install-includes:
+--      clay-dhall/clay-dhall.h
+--    , clay-dhall/type.h
+--    , clay-dhall/macro.h
   build-depends:
       base >=4.7 && <5
     , text
@@ -62,4 +50,6 @@ foreign-library clay-dhall
     , mtl
     , lens
     , dhall >= 1.19 && < 2
+  build-tool-depends:
+      cabal-plan:cabal-plan
   default-language: Haskell2010
