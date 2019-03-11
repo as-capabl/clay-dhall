@@ -5,7 +5,7 @@ C layer for Dhall language
 
 Description
 -----------------------------
-Dhall(https://github.com/dhall-lang/dhall-lang), developed by Gabriel Gonzalez, is strictly typed, deterministic (not turing complete) computer language.
+Dhall(https://github.com/dhall-lang/dhall-lang), developed by Gabriel Gonzalez, is strictly typed, total (not turing complete) computer language.
 Dhall is a good language to describe data, configuration, and so on.
 
 This library is a C binding of Dhall, which calls the Haskell implementation of Dhall via FFI.
