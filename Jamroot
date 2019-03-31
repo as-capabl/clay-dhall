@@ -1,11 +1,17 @@
 
-local dist-dir = [ SHELL "stack path --dist-dir" : strip-eol ] ;
-local local-install-root = [ SHELL "stack path --local-install-root" : strip-eol ] ;
+path-constant plan-json
+    : ./dist-newstyle/cache/plan.json
+    ;
+
+local dist-dir = [
+    SHELL "cabal new-exec aux-list-path -- $(plan-json) dist-dir"
+        : strip-eol
+    ] ;
 
 lib claydhall_test_link
     :
     : <name>clay-dhall <search>$(dist-dir)/build/clay-dhall
     :
-    : <include>include <library-path>.$(local-install-root)/lib
+    : <include>include <library-path>$(dist-dir)/build/clay-dhall
     ;
 

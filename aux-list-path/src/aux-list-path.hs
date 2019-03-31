@@ -1,6 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE ViewPatterns #-}
 
 module
     Main
@@ -30,13 +29,13 @@ main =
         let l = 
               do
                 (_, u)   <- Map.toList pjUnits
-                (cn, ci) <- Map.toList $ uComps u
+                (cn, a_) <- Map.toList $ uComps u
                 guard $ cn == CompNameFLib "clay-dhall"
                 return u 
         case l
           of
             u:_ -> return u
-            []  -> die_ "No configured foreign lib"
+            []  -> die_ "No configured foreign library `clay-dhall`"
             
     case action
       of
