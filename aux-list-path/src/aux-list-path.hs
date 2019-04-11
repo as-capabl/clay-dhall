@@ -29,7 +29,7 @@ main =
         let l = 
               do
                 (_, u)   <- Map.toList pjUnits
-                (cn, a_) <- Map.toList $ uComps u
+                (cn, _) <- Map.toList $ uComps u
                 guard $ cn == CompNameFLib "clay-dhall"
                 return u 
         case l

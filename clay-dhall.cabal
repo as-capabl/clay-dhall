@@ -50,6 +50,8 @@ foreign-library clay-dhall
     , mtl
     , lens
     , dhall >= 1.19 && < 2
+  build-tool-depends:
+      cabal-plan:cabal-plan
   default-language: Haskell2010
 
 executable aux-list-path
