@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-
+#include <stddef.h>
 
 typedef int_fast32_t cdhall_int;
 typedef uint_fast32_t cdhall_uint;

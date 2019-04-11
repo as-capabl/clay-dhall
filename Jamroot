@@ -20,23 +20,5 @@ build-project ctest
     ;
 
 # Make windows distribution
-install windist/include
-    : [ glob include/clay-dhall/*.h ]
-    : <install-source-root>include
+build-project windist
     ;
-
-install windist/lib
-    : [ glob $(dist-dir)/build/clay-dhall/*.dll ]
-    ;
-
-# Generate DEF
-import type ;
-type.register DEF : def ;
-
-import generators ;
-generators.register-standard def.dlltool-def : DEF : DLL ;
-
-actions dlltool-def {
-    dlltool --dllname $(<) --output-def $(>)
-}
-
