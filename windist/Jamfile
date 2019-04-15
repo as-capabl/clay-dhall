@@ -1,8 +1,8 @@
-# Temp
+project : requirements <target-os>windows ;
 
 install windist/include
-    : [ glob include/clay-dhall/*.h ]
-    : <install-source-root>include
+    : [ glob ../include/clay-dhall/*.h ]
+    : <install-source-root>../include
     ;
 
 install windist/lib
@@ -10,13 +10,13 @@ install windist/lib
     ;
 
 # Generate DEF
-import type ;
-type.register DEF : def ;
+#import type ;
+#type.register DEF : def ;
 
-import generators ;
-generators.register-standard def.dlltool-def : DEF : DLL ;
+#import generators ;
+#generators.register-standard def.dlltool-def : DEF : DLL ;
 
-actions dlltool-def {
-    dlltool --dllname $(<) --output-def $(>)
-}
+#actions dlltool-def {
+#    dlltool --dllname $(<) --output-def $(>)
+#}
 

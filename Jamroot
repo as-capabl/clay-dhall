@@ -3,10 +3,12 @@ path-constant plan-json
     : ./dist-newstyle/cache/plan.json
     ;
 
-local dist-dir = [
-    SHELL "cabal new-exec aux-list-path -- $(plan-json) dist-dir"
-        : strip-eol
-    ] ;
+path-constant dist-dir
+    :   [ 
+        SHELL "cabal new-exec aux-list-path -- $(plan-json) dist-dir"
+            : strip-eol
+        ]
+    ;
 
 lib claydhall_test_link
     :
@@ -20,5 +22,5 @@ build-project ctest
     ;
 
 # Make windows distribution
-build-project windist
-    ;
+#build-project windist
+#    ;
