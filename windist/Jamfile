@@ -5,9 +5,17 @@ install windist/include
     : <install-source-root>../include
     ;
 
+dllname = [ glob $(dist-dir)/build/clay-dhall/*.dll ] ;
+
 install windist/lib
-    : [ glob $(dist-dir)/build/clay-dhall/*.dll ]
+    : $(dllname) clay-dhall.def
     ;
+
+make clay-dhall.def : $(dllname) : @gendef ;
+actions gendef
+{
+    gendef - $(>) > $(<)
+}
 
 # Generate DEF
 #import type ;
