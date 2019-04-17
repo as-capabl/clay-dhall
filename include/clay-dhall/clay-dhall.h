@@ -104,6 +104,19 @@ DLL_EXPORT cdhall_objptr cdhall_embed(cdhall_typed_ptr holder);
 /* \} */
 
 /*! -------------------
+  \defgroup group_manip A few APIs to manipulate dhall values
+*/
+/* \{ */
+
+DLL_EXPORT bool cdhall_expr_eq(cdhall_objptr x, cdhall_objptr y);
+
+#if 0
+DLL_EXPORT cdhall_hashval cdhall_expr_hash(cdhall_objptr x);
+#endif
+
+/* \} */
+
+/*! -------------------
     \defgroup group_customize Customize execution environment
  */
 /* \{ */

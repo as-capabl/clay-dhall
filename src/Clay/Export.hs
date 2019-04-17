@@ -183,7 +183,7 @@ hsc_extract pE p =
 
     t <- asHolderType p
     maybe (return False) (>> return True) $ Dh.extract t e 
-  
+
 foreign export ccall hsc_embed :: Ptr CDhallTypedPtr -> IO (StablePtr Obj)
 hsc_embed p =
   do
@@ -192,6 +192,25 @@ hsc_embed p =
 
     it <- thPeek tptrPtr 
     newStablePtr . exprToObj $ Dh.embed it ()
+
+foreign export ccall hsc_expr_eq :: StablePtr Obj -> StablePtr Obj -> IO Bool
+hsc_expr_eq x y =
+  do
+    xExpr <- objToExpr <$> deRefStablePtr x
+    yExpr <- objToExpr <$> deRefStablePtr y
+    return $ xExpr == yExpr
+
+{-
+instance Hashable (DhC.Expr DhP.Src DhTC.X) where {}
+instance Hashable (DhC.Binding DhP.Src DhTC.X) where {}
+instance Hashable (DhC.Chunks DhP.Src DhTC.X) where {}
+instance Hashable (DhMap.Map Dh.Text (DhC.Expr DhP.Src DhTC.X)) where {}
+foreign export ccall hsc_expr_hash :: StablePtr Obj -> IO Int
+hsc_expr_hash x =
+  do
+    xExpr <- objToExpr <$> deRefStablePtr x
+    return $ hash xExpr
+-}
 
 --
 -- Settings
@@ -238,7 +257,7 @@ hsc_add_builtin stg csName nArg pArgPtr resPtr fin pUData evalPtr =
     args <- typeSpecByN nArg pArgPtr
     res <- typeSpecBy resPtr
     pForeign <- if pUData /= nullPtr then newForeignPtr fin pUData else newForeignPtr_ pUData
-    
+
     let -- Context
         typePushArg arg = DhC.Pi "_" (Dh.expected $ thPoke arg)
         ctxBody = V.foldr typePushArg (Dh.expected $ thPoke res) args
@@ -279,7 +298,7 @@ hsc_add_builtin stg csName nArg pArgPtr resPtr fin pUData evalPtr =
                             freeStablePtr sp
                         return . Just $! DhC.denote $ objToExpr o
                 Nothing -> return Nothing
-    
+
     sptrUpdate `flip` stg $ applyES $ execState $
       do
         Dh.startingContext <%= DhCtx.insert name ctxBody

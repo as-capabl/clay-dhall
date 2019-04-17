@@ -90,6 +90,18 @@ DLL_EXPORT cdhall_objptr cdhall_embed(cdhall_typed_ptr holder)
     return hsc_embed((HsPtr)&holder);
 }
 
+DLL_EXPORT bool cdhall_expr_eq(cdhall_objptr x, cdhall_objptr y)
+{
+    return hsc_expr_eq((HsStablePtr)x, (HsStablePtr)y);
+}
+
+#if 0
+DLL_EXPORT cdhall_hashval cdhall_expr_hash(cdhall_objptr x)
+{
+    return hsc_expr_hash((HsStablePtr)x);
+}
+#endif
+
 DLL_EXPORT cdhall_objptr cdhall_new_evaluate_settings()
 {
     return hsc_new_evaluate_settings();
@@ -99,6 +111,8 @@ DLL_EXPORT cdhall_objptr cdhall_new_input_settings()
 {
     return hsc_new_input_settings();
 }
+
+
 
 /*
 type BuiltinImpl = Ptr UserData -> Ptr (StablePtr Obj) -> IO (StablePtr Obj)

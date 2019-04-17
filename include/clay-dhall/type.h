@@ -4,6 +4,7 @@
 
 typedef int_fast32_t cdhall_int;
 typedef uint_fast32_t cdhall_uint;
+// typedef int32_t cdhall_hashval;
 
 /*! -------------------
     \defgroup group_type_spec Type spec descriptors.
