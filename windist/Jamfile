@@ -1,20 +1,30 @@
 project : requirements <target-os>windows ;
 
+dllname = [ glob $(dist-dir)/build/clay-dhall/*.dll ] ;
+
 install windist/include
     : [ glob ../include/clay-dhall/*.h ]
     : <install-source-root>../include
     ;
 
-dllname = [ glob $(dist-dir)/build/clay-dhall/*.dll ] ;
-
 install windist/lib
     : $(dllname) clay-dhall.def
+    ;
+
+install windist
+    : license-report.md ../README.md
     ;
 
 make clay-dhall.def : $(dllname) : @gendef ;
 actions gendef
 {
     gendef - $(>) > $(<)
+}
+
+make license-report.md : $(plan-json) : @lic ;
+actions lic
+{
+    cabal new-exec cabal-plan -- license-report flib:clay-dhall --builddir ../dist-newstyle > $(<)
 }
 
 # Generate DEF

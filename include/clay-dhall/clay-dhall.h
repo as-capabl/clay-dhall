@@ -28,6 +28,7 @@ extern "C" {
 #include "type.h"
 
 #ifdef __MINGW32__
+#  define STDCALL __stdcall
 #  ifdef CDHALL_DLL_IMPL
 #    define DLL_EXPORT __declspec(dllexport)
 #  else
@@ -35,6 +36,7 @@ extern "C" {
 #  endif
 #else
 #  define DLL_EXPORT
+#  define STDCALL
 #endif
 
 
@@ -48,23 +50,23 @@ extern "C" {
 /* \{ */
 
 //! Initialize the library
-DLL_EXPORT void cdhall_init(int* argc, char** argv[]);
+DLL_EXPORT void STDCALL cdhall_init(int* argc, char** argv[]);
 
 //! Terminate the library
-DLL_EXPORT void cdhall_exit();
+DLL_EXPORT void STDCALL cdhall_exit();
 
 //! A synonym of malloc.
-DLL_EXPORT void* cdhall_alloc_array(size_t size);
+DLL_EXPORT void* STDCALL cdhall_alloc_array(size_t size);
 
 //! A synonym of free.\n
 // Used to finalize memory blocks(array, string) returned by the library.
-DLL_EXPORT void cdhall_free_array(void* ptr);
+DLL_EXPORT void STDCALL cdhall_free_array(void* ptr);
 
-DLL_EXPORT cdhall_objptr cdhall_clone_object(cdhall_objptr ptr);
+DLL_EXPORT cdhall_objptr STDCALL cdhall_clone_object(cdhall_objptr ptr);
 
-DLL_EXPORT void cdhall_free_object(cdhall_objptr ptr);
+DLL_EXPORT void STDCALL cdhall_free_object(cdhall_objptr ptr);
 
-DLL_EXPORT bool cdhall_call_func(const cdhall_objptr ptr, const void* arg, void* dest);
+DLL_EXPORT bool STDCALL cdhall_call_func(const cdhall_objptr ptr, const void* arg, void* dest);
 
 /* \} */
 
@@ -73,9 +75,9 @@ DLL_EXPORT bool cdhall_call_func(const cdhall_objptr ptr, const void* arg, void*
  */
 /* \{ */
 
-DLL_EXPORT cdhall_error_code cdhall_last_error_code();
+DLL_EXPORT cdhall_error_code STDCALL cdhall_last_error_code();
 
-DLL_EXPORT const char* cdhall_last_error_message();
+DLL_EXPORT const char* STDCALL cdhall_last_error_message();
 
 /* \} */
 
@@ -85,21 +87,21 @@ DLL_EXPORT const char* cdhall_last_error_message();
  */
 /* \{ */
 
-DLL_EXPORT bool cdhall_input(const char* str, cdhall_typed_ptr holder);
+DLL_EXPORT bool STDCALL cdhall_input(const char* str, cdhall_typed_ptr holder);
 
-DLL_EXPORT bool cdhall_input_with_settings(cdhall_objptr stg, const char* str, cdhall_typed_ptr holder);
+DLL_EXPORT bool STDCALL cdhall_input_with_settings(cdhall_objptr stg, const char* str, cdhall_typed_ptr holder);
 
-DLL_EXPORT bool cdhall_input_file(const char* fileName, cdhall_typed_ptr holder);
+DLL_EXPORT bool STDCALL cdhall_input_file(const char* fileName, cdhall_typed_ptr holder);
 
-DLL_EXPORT bool cdhall_input_file_with_settings(cdhall_objptr stg, const char* fileName, cdhall_typed_ptr holder);
+DLL_EXPORT bool STDCALL cdhall_input_file_with_settings(cdhall_objptr stg, const char* fileName, cdhall_typed_ptr holder);
 
-DLL_EXPORT cdhall_objptr cdhall_input_expr(const char* str);
+DLL_EXPORT cdhall_objptr STDCALL cdhall_input_expr(const char* str);
 
 // DLL_EXPORT cdhall_objptr cdhall_input_expr_with_setting(cdhall_objptr stg, const char* str);
 
-DLL_EXPORT bool cdhall_extract(cdhall_objptr ptr, cdhall_typed_ptr holder);
+DLL_EXPORT bool STDCALL cdhall_extract(cdhall_objptr ptr, cdhall_typed_ptr holder);
 
-DLL_EXPORT cdhall_objptr cdhall_embed(cdhall_typed_ptr holder);
+DLL_EXPORT cdhall_objptr STDCALL cdhall_embed(cdhall_typed_ptr holder);
 
 /* \} */
 
@@ -108,7 +110,7 @@ DLL_EXPORT cdhall_objptr cdhall_embed(cdhall_typed_ptr holder);
 */
 /* \{ */
 
-DLL_EXPORT bool cdhall_expr_eq(cdhall_objptr x, cdhall_objptr y);
+DLL_EXPORT bool STDCALL cdhall_expr_eq(cdhall_objptr x, cdhall_objptr y);
 
 #if 0
 DLL_EXPORT cdhall_hashval cdhall_expr_hash(cdhall_objptr x);
@@ -121,9 +123,9 @@ DLL_EXPORT cdhall_hashval cdhall_expr_hash(cdhall_objptr x);
  */
 /* \{ */
 
-DLL_EXPORT cdhall_objptr cdhall_new_input_settings();
+DLL_EXPORT cdhall_objptr STDCALL cdhall_new_input_settings();
 
-DLL_EXPORT cdhall_objptr cdhall_new_evaluate_settings();
+DLL_EXPORT cdhall_objptr STDCALL cdhall_new_evaluate_settings();
 
 typedef cdhall_objptr (*cdhall_builtin_func)(void*, const cdhall_objptr*);
 
