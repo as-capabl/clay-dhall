@@ -43,10 +43,18 @@ int main()
     cdhall_typed_ptr hArray = {{CDHALL_TYPE_ARRAY, &hArrayElem}, &array};
     cdhall_objptr exprArray = cdhall_embed(hArray);
     cdhall_objptr exprArray2 = cdhall_input_expr("[1,2,3]");
-
     assert(cdhall_expr_eq(exprArray, exprArray2));
     cdhall_free_object(exprArray);
     cdhall_free_object(exprArray2);
+
+    // Record
+    test_struct ts1 = { 1, 10.0 };
+    cdhall_typed_ptr hTs1 = { {CDHALL_TYPE_RECORD, &test_struct_rec}, &ts1 };
+    cdhall_objptr exprTs1 = cdhall_embed(hTs1);
+    cdhall_objptr exprTs2 = cdhall_input_expr("{ testI = +1, testD = 10.0 }");
+    assert(cdhall_expr_eq(exprTs1, exprTs2));
+    cdhall_free_object(exprTs1);
+    cdhall_free_object(exprTs2);
 
     cdhall_exit();
 }
