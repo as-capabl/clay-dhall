@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['customize_20execution_20environment',['Customize execution environment',['../group__group__customize.html',1,'']]]
+  ['a_20few_20apis_20to_20manipulate_20dhall_20values',['A few APIs to manipulate dhall values',['../group__group__manip.html',1,'']]]
 ];

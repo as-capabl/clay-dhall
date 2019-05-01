@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type_20spec_20descriptors_2e',['Type spec descriptors.',['../group__group__type__spec.html',1,'']]]
+  ['host_20types_2e',['Host types.',['../group__group__host__type.html',1,'']]]
 ];

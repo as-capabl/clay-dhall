@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['host_20types_2e',['Host types.',['../group__group__host__type.html',1,'']]]
+  ['error_20notifications_2e',['Error Notifications.',['../group__group__error__notif.html',1,'']]]
 ];
