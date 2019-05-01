@@ -12,6 +12,9 @@ unit-test type_input_simple
     : ..//claydhall_test_link type_input_simple.c
     ;
 
+unit-test type_input_compound
+    : ..//claydhall_test_link type_input_compound.c
+    ;
 
 unit-test exec
     : ..//claydhall_test_link exec.c
