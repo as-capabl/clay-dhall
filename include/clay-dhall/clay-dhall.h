@@ -81,6 +81,14 @@ DLL_EXPORT const char* STDCALL cdhall_last_error_message();
 
 /* \} */
 
+/*! -------------------
+    \defgroup group_prettyprinting Pretty Printing
+ */
+/* \{ */
+
+DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_objptr expr);
+
+/* \} */
 
 /*! -------------------
     \defgroup group_exec Dhall execution

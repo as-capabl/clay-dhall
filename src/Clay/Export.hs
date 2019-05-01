@@ -38,6 +38,9 @@ import qualified Dhall.Parser as DhP
 import qualified Dhall.TypeCheck as DhTC
 import qualified Dhall.Context as DhCtx
 
+import qualified Data.Text.Prettyprint.Doc as PP
+import qualified Data.Text.Prettyprint.Doc.Render.Text as PP
+
 import Clay.Type
 import Clay.Obj
 
@@ -127,6 +130,16 @@ hsc_call_func p arg dest =
     f <- objToTEFunc <$> deRefStablePtr p
     f arg dest
     return True
+
+foreign export ccall hsc_show_expr_simple :: StablePtr Obj -> IO CString
+hsc_show_expr_simple p =
+  do
+    expr <- objToExpr <$> deRefStablePtr p
+    let stream = PP.layoutCompact (PP.pretty expr)
+        txt = PP.renderStrict stream
+        bs = T.encodeUtf8 txt
+    allocCopyCS bs
+
 
 foreign export ccall hsc_input :: CString -> Ptr CDhallTypedPtr -> IO Bool
 hsc_input cs p =

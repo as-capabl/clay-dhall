@@ -53,6 +53,11 @@ DLL_EXPORT const char* STDCALL cdhall_last_error_message()
     return hsc_last_error_message();
 }
 
+DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_objptr expr)
+{
+    return hsc_show_expr_simple((HsStablePtr)expr);
+}
+
 
 DLL_EXPORT bool STDCALL cdhall_input(const char* str, cdhall_typed_ptr holder)
 {

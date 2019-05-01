@@ -43,6 +43,7 @@ int main()
     cdhall_typed_ptr hArray = {{CDHALL_TYPE_ARRAY, &hArrayElem}, &array};
     cdhall_objptr exprArray = cdhall_embed(hArray);
     cdhall_objptr exprArray2 = cdhall_input_expr("[1,2,3]");
+
     assert(cdhall_expr_eq(exprArray, exprArray2));
     cdhall_free_object(exprArray);
     cdhall_free_object(exprArray2);
