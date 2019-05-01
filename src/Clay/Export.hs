@@ -211,7 +211,7 @@ hsc_expr_eq x y =
   do
     xExpr <- objToExpr <$> deRefStablePtr x
     yExpr <- objToExpr <$> deRefStablePtr y
-    return $ xExpr == yExpr
+    return $ DhC.normalize xExpr == (DhC.normalize yExpr :: DhC.Expr DhP.Src DhTC.X)
 
 {-
 instance Hashable (DhC.Expr DhP.Src DhTC.X) where {}
