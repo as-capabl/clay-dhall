@@ -56,5 +56,17 @@ int main()
     cdhall_free_object(exprTs1);
     cdhall_free_object(exprTs2);
 
+    // Union
+    cdhall_union* pU = malloc(CDHALL_UNION_REQUIRED_SIZE(test_union));
+    pU->index = 1;
+    ((test_union*)pU->data)->ts = (test_struct){ 2, 11.0 };
+    cdhall_typed_ptr hU = {{CDHALL_TYPE_UNION, &test_union_spec}, pU};
+    cdhall_objptr exprU1 = cdhall_embed(hU);
+    cdhall_objptr exprU2 = cdhall_input_expr("<Ts = {testI = +2, testD = 11.0} | I : Integer>");
+    assert(cdhall_expr_eq(exprU1, exprU2));
+    cdhall_free_object(exprU1);
+    cdhall_free_object(exprU2);
+    free(pU);
+
     cdhall_exit();
 }

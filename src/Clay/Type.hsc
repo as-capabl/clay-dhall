@@ -250,19 +250,28 @@ typeSpecBy p =
 
                 sp <- typeSpecBy (castPtr pItm `plusPtr` #{offset cdhall_uitem_spec, type})
                 let uitem = asUnionItem i <$> thPoke sp
-                return (txtName, uitem)
+                return (txtName, (thPeek sp, uitem))
 
             let tp = DhMap.fromList l
 
             return $ CDhallTypeHolder {
-                thPeek = undefined,
+                thPeek = \p ->
+                  do
+                    i <- (fromIntegral :: CDhallInt -> Int) <$> #{peek cdhall_union, index} (castPtr p)
+                    let txtName = fst (l !! i)
+                        peeker = fst . snd $ l !! i
+                    pk <- peeker (p `plusPtr` #{offset cdhall_union, data})
+                    return $ Dh.InputType {
+                        embed = \() -> DhC.UnionLit txtName (Dh.embed pk ()) (Dh.expected . snd <$> DhMap.delete txtName tp),
+                        declared = DhC.Union $ Dh.expected . snd <$> tp
+                      },
                 thPoke = Dh.Type {
                     extract = \(DhC.UnionLit k v _) ->
                       do
                         t <- DhMap.lookup k tp
-                        Dh.extract t v
+                        Dh.extract (snd t) v
                         ,
-                    expected = DhC.Union $ Dh.expected <$> tp
+                    expected = DhC.Union $ Dh.expected . snd <$> tp
                   },
                 thSizeOf = #{offset cdhall_union, data} + fromIntegral byteSize
               }
