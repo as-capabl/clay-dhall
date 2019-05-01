@@ -37,7 +37,7 @@ int main()
     cdhall_init(NULL, NULL);
 
     // Array
-    const cdhall_int arrayElem[] = {1, 2, 3};
+    cdhall_uint arrayElem[] = {1, 2, 3};
     cdhall_array array = { sizeof(arrayElem)/sizeof(arrayElem[0]), arrayElem };
     cdhall_type_spec hArrayElem = {CDHALL_TYPE_NAT, NULL};
     cdhall_typed_ptr hArray = {{CDHALL_TYPE_ARRAY, &hArrayElem}, &array};

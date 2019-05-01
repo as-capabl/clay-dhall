@@ -43,6 +43,7 @@ foreign-library clay-dhall
     , clay-dhall/macro.h
   build-depends:
       base >=4.7 && <5
+    , containers
     , text
     , bytestring
     , vector

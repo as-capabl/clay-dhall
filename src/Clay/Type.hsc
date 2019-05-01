@@ -33,6 +33,7 @@ import qualified Data.ByteString.Unsafe as B
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import qualified Data.Vector as V
+import qualified Data.Sequence as Seq
 
 import qualified Dhall as Dh
 import qualified Dhall.Core as DhC
@@ -143,6 +144,19 @@ allocAndPokeArray elemSize v pCDhallArray =
     V.imapM_ (\i write -> write $ p `plusPtr` (elemSize * i)) v
     poke (castPtr pCDhallArray) $ CDhallArray len p
 
+peekAsArray :: DhC.Expr DhP.Src DhTC.X -> Int -> PeekType -> PeekType
+peekAsArray declaredIn elemSize pt pCDhallArray =
+  do
+    CDhallArray len p <- peek (castPtr pCDhallArray)
+    embededElems <- sequenceA $
+      do
+        i <- Seq.fromList [0 .. len - 1]
+        return $ pt (p `plusPtr` (elemSize * i))
+    let
+        embedOut () = DhC.ListLit (Just declaredIn) $ (\it -> Dh.embed it ()) <$> embededElems
+        declaredOut = DhC.App DhC.List declaredIn
+    return $ Dh.InputType embedOut declaredOut
+
 asUnionItem :: CDhallInt -> PokeFunc -> PokeFunc
 asUnionItem i oldPoke = \p ->
   do
@@ -177,7 +191,7 @@ typeSpecBy p =
           do
             CDhallTypeHolder{..} <- typeSpecBy (castPtr detail)
             return $ CDhallTypeHolder {
-                thPeek = undefined,
+                thPeek = peekAsArray (Dh.expected thPoke) thSizeOf thPeek,
                 thPoke = allocAndPokeArray thSizeOf <$> Dh.vector thPoke,
                 thSizeOf = sizeOf (undefined :: CDhallArray)
               }
