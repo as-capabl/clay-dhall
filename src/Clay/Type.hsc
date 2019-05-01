@@ -197,7 +197,7 @@ typeSpecBy p =
               }
         | typeId == tUnit ->
             return $ CDhallTypeHolder {
-                thPeek = undefined,
+                thPeek = \_ -> return (Dh.inject),
                 thPoke = noPoke <$ Dh.unit,
                 thSizeOf = 1
               }

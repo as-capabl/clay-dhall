@@ -19,5 +19,13 @@ int main()
     cdhall_free_object(exprN2);
     cdhall_free_object(exprN3);
 
+ 
+    cdhall_typed_ptr hUnit = {{CDHALL_TYPE_UNIT, NULL}, NULL};
+    cdhall_objptr exprUnit = cdhall_embed(hUnit);
+    cdhall_objptr exprUnit2 = cdhall_input_expr("{=}");
+    assert(cdhall_expr_eq(exprUnit, exprUnit2));
+    cdhall_free_object(exprUnit);
+    cdhall_free_object(exprUnit2);
+
     cdhall_exit();
 }
