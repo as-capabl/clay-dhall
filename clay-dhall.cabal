@@ -9,7 +9,7 @@ copyright:      2018 Hidenori Azuma
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
-cabal-version:  >= 1.10
+cabal-version:  2.0
 extra-source-files:
     ChangeLog.md
     README.md
@@ -37,10 +37,10 @@ foreign-library clay-dhall
     , clay-dhall/macro.h
   c-sources:
       csrc/clay.c
---  install-includes:
---      clay-dhall/clay-dhall.h
---    , clay-dhall/type.h
---    , clay-dhall/macro.h
+  install-includes:
+      clay-dhall/clay-dhall.h
+    , clay-dhall/type.h
+    , clay-dhall/macro.h
   build-depends:
       base >=4.7 && <5
     , text
