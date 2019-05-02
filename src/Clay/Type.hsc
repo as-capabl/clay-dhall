@@ -153,7 +153,7 @@ peekAsArray declaredIn elemSize pt pCDhallArray =
         i <- Seq.fromList [0 .. len - 1]
         return $ pt (p `plusPtr` (elemSize * i))
     let
-        embedOut () = DhC.ListLit (Just declaredIn) $ (\it -> Dh.embed it ()) <$> embededElems
+        embedOut () = DhC.ListLit (Just declaredIn) (flip Dh.embed () <$> embededElems)
         declaredOut = DhC.App DhC.List declaredIn
     return $ Dh.InputType embedOut declaredOut
 
@@ -205,7 +205,18 @@ typeSpecBy p =
           do
             sp <- typeSpecBy $ castPtr detail
             return $ CDhallTypeHolder {
-                thPeek = undefined,
+                thPeek = \p ->
+                  do
+                    i <- #{peek cdhall_union, index} (castPtr p) :: IO CDhallInt
+                    mx <- if i == coptSome
+                        then Just <$> thPeek sp (p `plusPtr` #{offset cdhall_union, data})
+                        else return Nothing
+                    let spExpected = Dh.expected $ thPoke sp
+                    return $ Dh.InputType {
+                        embed = \() -> DhC.OptionalLit spExpected (flip Dh.embed () <$> mx),
+                        declared = DhC.App DhC.Optional spExpected
+                      }
+                    ,
                 thPoke = maybe (asUnionItem coptNone noPoke) (asUnionItem coptSome) <$> Dh.maybe (thPoke sp),
                 thSizeOf = thSizeOf sp + #{offset cdhall_union, data}
               }

@@ -53,13 +53,13 @@ int main()
     *((cdhall_int*)pOpt->data) = 123;
     cdhall_typed_ptr hOpt = {{CDHALL_TYPE_OPTIONAL, &hArrayElem}, pOpt};
     cdhall_objptr exprSome1 = cdhall_embed(hOpt);
-    cdhall_objptr exprSome2 = cdhall_input_expr("Some 1");
+    cdhall_objptr exprSome2 = cdhall_input_expr("Some 123");
     pOpt->index = CDHALL_OPTIONAL_NONE;
     cdhall_objptr exprNone1 = cdhall_embed(hOpt);
-    cdhall_objptr exprNone2 = cdhall_input_expr("None : Optional Natural");
+    cdhall_objptr exprNone2 = cdhall_input_expr("None Natural");
     assert(cdhall_expr_eq(exprSome1, exprSome2));
     assert(cdhall_expr_eq(exprNone1, exprNone2));
-    assert(cdhall_expr_eq(exprSome1, exprNone1));
+    assert(!cdhall_expr_eq(exprSome1, exprNone1));
     cdhall_free_object(exprSome1);
     cdhall_free_object(exprSome2);
     cdhall_free_object(exprNone1);
