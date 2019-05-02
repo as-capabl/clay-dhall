@@ -298,7 +298,7 @@ hsc_add_builtin stg csName nArg pArgPtr resPtr fin pUData evalPtr =
             case mx
               of
                 Just (DhC.Var name, act) -> liftIO $
-                    allocaBytes (sizeOf (undefined :: StablePtr Obj) * fromIntegral nArg) $ \pArgArray ->
+                    allocaBytes (sizeOf (sizeDummy :: StablePtr Obj) * fromIntegral nArg) $ \pArgArray ->
                     withForeignPtr pForeign $ \pUData' ->
                       do
                         act pArgArray

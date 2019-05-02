@@ -81,6 +81,9 @@ instance Storable CDhallArray
     sizeOf _ = #{size cdhall_array}
     alignment _ = #{alignment cdhall_array}
 
+sizeDummy :: a
+sizeDummy = error "Size Dummy"
+
 --
 -- Type id and handlers
 --
@@ -126,7 +129,7 @@ holderStorable store fetch = CDhallTypeHolder {..}
 
     thPeek p = (>$ Dh.inject) <$> fetchPeek p
     thPoke = storePoke <$> Dh.auto
-    thSizeOf = sizeOf (undefined :: b)
+    thSizeOf = sizeOf (sizeDummy :: b)
 
 allocCopyCS :: B.ByteString -> IO CString
 allocCopyCS bs = B.unsafeUseAsCStringLen bs $ \(p, len) ->
@@ -193,7 +196,7 @@ typeSpecBy p =
             return $ CDhallTypeHolder {
                 thPeek = peekAsArray (Dh.expected thPoke) thSizeOf thPeek,
                 thPoke = allocAndPokeArray thSizeOf <$> Dh.vector thPoke,
-                thSizeOf = sizeOf (undefined :: CDhallArray)
+                thSizeOf = sizeOf (sizeDummy :: CDhallArray)
               }
         | typeId == tUnit ->
             return $ CDhallTypeHolder {
@@ -293,7 +296,7 @@ typeSpecBy p =
             resultSpec <- typeSpecBy (castPtr detail `plusPtr` #{offset cdhall_funapp, resultSpec})
 
             return $ CDhallTypeHolder {
-                thPeek = undefined,
+                thPeek = error "Function input is not allowed",
                 thPoke = Dh.Type {
                     extract = \e -> Just $ \pTEFunc ->
                       do
@@ -308,7 +311,7 @@ typeSpecBy p =
                         ,
                     expected = DhC.Pi "_" (Dh.expected (thPoke argSpec)) (Dh.expected (thPoke resultSpec))
                   },
-                thSizeOf = sizeOf (undefined :: Ptr Obj)
+                thSizeOf = sizeOf (sizeDummy :: Ptr Obj)
               }
 
 typeSpecByN :: CDhallInt -> Ptr CDhallTypeHolder -> IO (V.Vector CDhallTypeHolder)
