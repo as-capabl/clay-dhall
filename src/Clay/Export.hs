@@ -42,6 +42,7 @@ import qualified Data.Text.Prettyprint.Doc as PP
 import qualified Data.Text.Prettyprint.Doc.Render.Text as PP
 
 import Clay.Type
+import Clay.Core
 import Clay.Obj
 
 

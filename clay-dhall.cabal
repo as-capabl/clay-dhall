@@ -27,6 +27,7 @@ foreign-library clay-dhall
       src
   other-modules:
       Clay.Type
+    , Clay.Core
     , Clay.Obj
     , Clay.Export
   include-dirs:
