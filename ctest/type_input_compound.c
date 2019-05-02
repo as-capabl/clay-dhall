@@ -47,6 +47,25 @@ int main()
     cdhall_free_object(exprArray);
     cdhall_free_object(exprArray2);
 
+    // Optional
+    cdhall_union* pOpt = malloc(CDHALL_UNION_REQUIRED_SIZE(cdhall_uint));
+    pOpt->index = CDHALL_OPTIONAL_SOME;
+    *((cdhall_int*)pOpt->data) = 123;
+    cdhall_typed_ptr hOpt = {{CDHALL_TYPE_OPTIONAL, &hArrayElem}, pOpt};
+    cdhall_objptr exprSome1 = cdhall_embed(hOpt);
+    cdhall_objptr exprSome2 = cdhall_input_expr("Some 1");
+    pOpt->index = CDHALL_OPTIONAL_NONE;
+    cdhall_objptr exprNone1 = cdhall_embed(hOpt);
+    cdhall_objptr exprNone2 = cdhall_input_expr("None : Optional Natural");
+    assert(cdhall_expr_eq(exprSome1, exprSome2));
+    assert(cdhall_expr_eq(exprNone1, exprNone2));
+    assert(cdhall_expr_eq(exprSome1, exprNone1));
+    cdhall_free_object(exprSome1);
+    cdhall_free_object(exprSome2);
+    cdhall_free_object(exprNone1);
+    cdhall_free_object(exprNone2);
+    free(pOpt);
+
     // Record
     test_struct ts1 = { 1, 10.0 };
     cdhall_typed_ptr hTs1 = { {CDHALL_TYPE_RECORD, &test_struct_rec}, &ts1 };
