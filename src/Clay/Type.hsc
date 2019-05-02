@@ -48,12 +48,13 @@ import Clay.Obj
 foreign import ccall "malloc" cMalloc :: CSize -> IO (Ptr a)
 foreign import ccall "free" cFree :: Ptr a -> IO ()
 
-type CDhallInt = #{type cdhall_int}
+sizeDummy :: a
+sizeDummy = error "Size Dummy"
 
-data CDhallArray = CDhallArray {
-    arraySize :: Int,
-    arrayData :: Ptr ()
-  }
+type CDhallInt = #{type cdhall_int}
+type CDhallWord = #{type cdhall_uint}
+type CDhallDouble = #{type double}
+
 
 data CDhallTypedPtr = CDhallTypedPtr {
     tptrSpec :: Ptr CDhallTypeHolder,
@@ -66,6 +67,11 @@ peekTypedPtr p =
     let tptrSpec = p `plusPtr` #{offset cdhall_typed_ptr, spec}
     tptrPtr <- #{peek cdhall_typed_ptr, ptr} p  
     return CDhallTypedPtr{..}
+
+data CDhallArray = CDhallArray {
+    arraySize :: Int,
+    arrayData :: Ptr ()
+  }
 
 instance Storable CDhallArray
   where
@@ -81,8 +87,25 @@ instance Storable CDhallArray
     sizeOf _ = #{size cdhall_array}
     alignment _ = #{alignment cdhall_array}
 
-sizeDummy :: a
-sizeDummy = error "Size Dummy"
+data CDhallTypeSpec = CDhallTypeSpec {
+    typeId :: CDhallTypeId,
+    detail :: Ptr ()
+  }
+
+instance Storable CDhallTypeSpec
+  where
+    peek p =
+      do
+        typeId <- #{peek cdhall_type_spec, typeId} p :: IO CDhallTypeId
+        detail <- #{peek cdhall_type_spec, detail} p :: IO (Ptr ())  
+        return CDhallTypeSpec {..}
+    poke p CDhallTypeSpec{..} =
+      do
+        #{poke cdhall_type_spec, typeId} p typeId
+        #{poke cdhall_type_spec, detail} p detail
+    sizeOf _ = #{size cdhall_type_spec}
+    alignment _ = #{alignment cdhall_array}  
+          
 
 --
 -- Type id and handlers
@@ -172,23 +195,22 @@ noPoke _ = return ()
 typeSpecBy :: Ptr CDhallTypeHolder -> IO CDhallTypeHolder
 typeSpecBy p =
   do
-    typeId <- #{peek cdhall_type_spec, typeId} p :: IO CDhallTypeId
-    detail <- #{peek cdhall_type_spec, detail} p :: IO (Ptr ())
+    CDhallTypeSpec {..} <- peek (castPtr p)
     if
         | typeId == tBool -> return $ holderStorable
             ((\b -> return $ if b then 1 else 0) :: Bool -> IO CBool)
             (\cb -> return $ cb /= 0)
         | typeId == tNat -> return $ holderStorable
-            (return . fromIntegral :: Dh.Natural -> IO #{type cdhall_uint})
+            (return . fromIntegral :: Dh.Natural -> IO CDhallWord)
             (return . fromIntegral)
         | typeId == tInt -> return $ holderStorable
-            (return . fromIntegral :: Integer -> IO #{type cdhall_int})
+            (return . fromIntegral :: Integer -> IO CDhallInt)
             (return . fromIntegral)
         | typeId == tString -> return $ holderStorable
             (allocCopyCS . T.encodeUtf8 :: T.Text -> IO CString)
             (\cs -> T.decodeUtf8 <$> B.unsafePackCString cs)
         | typeId == tDouble -> return $ holderStorable
-            (return . realToFrac :: Double -> IO #{type double})
+            (return . realToFrac :: Double -> IO CDhallDouble)
             (return . realToFrac)
         | typeId == tArray ->
           do
