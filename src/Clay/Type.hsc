@@ -96,8 +96,8 @@ instance Storable CDhallTypeSpec
   where
     peek p =
       do
-        typeId <- #{peek cdhall_type_spec, typeId} p :: IO CDhallTypeId
-        detail <- #{peek cdhall_type_spec, detail} p :: IO (Ptr ())  
+        typeId <- #{peek cdhall_type_spec, typeId} p
+        detail <- #{peek cdhall_type_spec, detail} p  
         return CDhallTypeSpec {..}
     poke p CDhallTypeSpec{..} =
       do
@@ -105,7 +105,51 @@ instance Storable CDhallTypeSpec
         #{poke cdhall_type_spec, detail} p detail
     sizeOf _ = #{size cdhall_type_spec}
     alignment _ = #{alignment cdhall_array}  
-          
+
+data CDhallRecordSpec = CDhallRecordSpec {
+    recordNumFields :: CDhallInt,
+    recordByteSize :: CSize,
+    recordFields :: Ptr ()
+  }
+instance Storable CDhallRecordSpec
+  where
+    peek p =
+      do
+        recordNumFields <- #{peek cdhall_record_spec, numFields} p
+        recordByteSize <- #{peek cdhall_record_spec, byteSize} p
+        recordFields <- #{peek cdhall_record_spec, pFields} p
+        return CDhallRecordSpec {..}
+    poke = undefined
+    sizeOf _ = #{size cdhall_record_spec}
+    alignment _ = #{alignment cdhall_record_spec}
+
+
+data CDhallUnionSpec = CDhallUnionSpec {
+    unionNumItems :: CDhallInt,
+    unionByteSize :: CSize,
+    unionItems :: Ptr ()
+  }
+
+instance Storable CDhallUnionSpec
+  where
+    peek p =
+      do
+        unionNumItems <- #{peek cdhall_union_spec, numItems} p
+        unionByteSize <- #{peek cdhall_union_spec, byteSize} p
+        unionItems <- #{peek cdhall_union_spec, pItems} p
+        return CDhallUnionSpec {..}
+    poke = undefined
+    sizeOf _ = #{size cdhall_union_spec}
+    alignment _ = #{alignment cdhall_union_spec}
+
+unionOffset :: Int
+unionOffset = #{offset cdhall_union, data}
+
+funcArgSpec :: Ptr () -> Ptr CDhallTypeSpec
+funcArgSpec p = p `plusPtr` #{offset cdhall_func_spec, argSpec}
+
+funcResultSpec :: Ptr () -> Ptr CDhallTypeSpec
+funcResultSpec p = p `plusPtr` #{offset cdhall_func_spec, resultSpec}
 
 --
 -- Type id and handlers
@@ -192,6 +236,69 @@ asUnionItem i oldPoke = \p ->
 noPoke :: PokeFunc
 noPoke _ = return ()
 
+recordHolder :: CDhallRecordSpec -> IO CDhallTypeHolder
+recordHolder CDhallRecordSpec{..} = 
+  do
+    flds <- forM [0 .. recordNumFields - 1] $ \i ->
+      do
+        let pFld = recordFields `plusPtr` fromIntegral (#{size cdhall_field_spec} * i)
+
+        csName <- #{peek cdhall_field_spec, name} pFld :: IO CString
+        txtName <- T.decodeUtf8 <$> B.unsafePackCString csName
+
+        ofs <- #{peek cdhall_field_spec, offset} pFld :: IO CSize
+
+        sp <- typeSpecBy (castPtr pFld `plusPtr` #{offset cdhall_field_spec, type})
+
+        let actOfs act p = act $ p `plusPtr` fromIntegral ofs
+            newPeek = actOfs $ \p -> Dh.inputFieldWith txtName <$> thPeek sp p
+            newPoke = Dh.field txtName (actOfs <$> thPoke sp)
+        return (newPeek, newPoke)
+
+    return $ CDhallTypeHolder {
+        thPeek = \p -> Dh.inputRecord <$> foldr (\f g -> liftA2 (divide $ \_ -> ((), ())) (f p) g) (return conquer) (fst <$> flds),
+        thPoke = Dh.record (foldr (liftA2 $ \f g p -> f p >> g p) (pure (\_ -> return ())) (snd <$> flds)),
+        thSizeOf = fromIntegral recordByteSize
+      }
+
+unionHolder :: CDhallUnionSpec -> IO CDhallTypeHolder
+unionHolder CDhallUnionSpec{..} =
+  do    
+    l <- forM [0 .. unionNumItems - 1] $ \i ->
+      do
+        let pItm = unionItems `plusPtr` fromIntegral (#{size cdhall_uitem_spec} * fromIntegral i)
+
+        csName <- #{peek cdhall_uitem_spec, name} pItm :: IO CString
+        txtName <- T.decodeUtf8 <$> B.unsafePackCString csName
+
+        sp <- typeSpecBy (castPtr pItm `plusPtr` #{offset cdhall_uitem_spec, type})
+        let uitem = asUnionItem i <$> thPoke sp
+        return (txtName, (thPeek sp, uitem))
+
+    let tp = DhMap.fromList l
+
+    return $ CDhallTypeHolder {
+        thPeek = \p ->
+          do
+            i <- (fromIntegral :: CDhallInt -> Int) <$> #{peek cdhall_union, index} (castPtr p)
+            let txtName = fst (l !! i)
+                peeker = fst . snd $ l !! i
+            pk <- peeker (p `plusPtr` #{offset cdhall_union, data})
+            return $ Dh.InputType {
+                embed = \() -> DhC.UnionLit txtName (Dh.embed pk ()) (Dh.expected . snd <$> DhMap.delete txtName tp),
+                declared = DhC.Union $ Dh.expected . snd <$> tp
+              },
+        thPoke = Dh.Type {
+            extract = \(DhC.UnionLit k v _) ->
+              do
+                t <- DhMap.lookup k tp
+                Dh.extract (snd t) v
+                ,
+            expected = DhC.Union $ Dh.expected . snd <$> tp
+          },
+        thSizeOf = unionOffset + fromIntegral unionByteSize
+      }
+
 typeSpecBy :: Ptr CDhallTypeSpec -> IO CDhallTypeHolder
 typeSpecBy p =
   do
@@ -246,76 +353,13 @@ typeSpecBy p =
                 thSizeOf = thSizeOf sp + #{offset cdhall_union, data}
               }
         | typeId == tRecord ->
-          do
-            numFields <- #{peek cdhall_record_spec, numFields} detail :: IO #{type cdhall_int}
-            byteSize <- #{peek cdhall_record_spec, byteSize} detail :: IO CSize
-            pFields <- #{peek cdhall_record_spec, pFields} detail :: IO (Ptr ())
-
-            flds <- forM [0 .. numFields - 1] $ \i ->
-              do
-                let pFld = pFields `plusPtr` fromIntegral (#{size cdhall_field_spec} * i)
-
-                csName <- #{peek cdhall_field_spec, name} pFld :: IO CString
-                txtName <- T.decodeUtf8 <$> B.unsafePackCString csName
-
-                ofs <- #{peek cdhall_field_spec, offset} pFld :: IO CSize
-
-                sp <- typeSpecBy (castPtr pFld `plusPtr` #{offset cdhall_field_spec, type})
-
-                let actOfs act p = act $ p `plusPtr` fromIntegral ofs
-                    newPeek = actOfs $ \p -> Dh.inputFieldWith txtName <$> thPeek sp p
-                    newPoke = Dh.field txtName (actOfs <$> thPoke sp)
-                return (newPeek, newPoke)
-
-            return $ CDhallTypeHolder {
-                thPeek = \p -> Dh.inputRecord <$> foldr (\f g -> liftA2 (divide $ \_ -> ((), ())) (f p) g) (return conquer) (fst <$> flds),
-                thPoke = Dh.record (foldr (liftA2 $ \f g p -> f p >> g p) (pure (\_ -> return ())) (snd <$> flds)),
-                thSizeOf = fromIntegral byteSize
-              }
+            peek (castPtr detail) >>= recordHolder
         | typeId == tUnion ->
-          do
-            numItems <- #{peek cdhall_union_spec, numItems} detail :: IO #{type cdhall_int}
-            byteSize <- #{peek cdhall_union_spec, byteSize} detail :: IO CSize
-            pItems <- #{peek cdhall_union_spec, pItems} detail :: IO (Ptr ())
-            l <- forM [0 .. numItems - 1] $ \i ->
-              do
-                let pItm = pItems `plusPtr` fromIntegral (#{size cdhall_uitem_spec} * fromIntegral i)
-
-                csName <- #{peek cdhall_uitem_spec, name} pItm :: IO CString
-                txtName <- T.decodeUtf8 <$> B.unsafePackCString csName
-
-                sp <- typeSpecBy (castPtr pItm `plusPtr` #{offset cdhall_uitem_spec, type})
-                let uitem = asUnionItem i <$> thPoke sp
-                return (txtName, (thPeek sp, uitem))
-
-            let tp = DhMap.fromList l
-
-            return $ CDhallTypeHolder {
-                thPeek = \p ->
-                  do
-                    i <- (fromIntegral :: CDhallInt -> Int) <$> #{peek cdhall_union, index} (castPtr p)
-                    let txtName = fst (l !! i)
-                        peeker = fst . snd $ l !! i
-                    pk <- peeker (p `plusPtr` #{offset cdhall_union, data})
-                    return $ Dh.InputType {
-                        embed = \() -> DhC.UnionLit txtName (Dh.embed pk ()) (Dh.expected . snd <$> DhMap.delete txtName tp),
-                        declared = DhC.Union $ Dh.expected . snd <$> tp
-                      },
-                thPoke = Dh.Type {
-                    extract = \(DhC.UnionLit k v _) ->
-                      do
-                        t <- DhMap.lookup k tp
-                        Dh.extract (snd t) v
-                        ,
-                    expected = DhC.Union $ Dh.expected . snd <$> tp
-                  },
-                thSizeOf = #{offset cdhall_union, data} + fromIntegral byteSize
-              }
-
+            peek (castPtr detail) >>= unionHolder
         | typeId == tFunApp ->
           do
-            argSpec <- typeSpecBy (castPtr detail `plusPtr` #{offset cdhall_funapp, argSpec})
-            resultSpec <- typeSpecBy (castPtr detail `plusPtr` #{offset cdhall_funapp, resultSpec})
+            argSpec <- typeSpecBy $ funcArgSpec detail
+            resultSpec <- typeSpecBy $ funcResultSpec detail
 
             return $ CDhallTypeHolder {
                 thPeek = error "Function input is not allowed",

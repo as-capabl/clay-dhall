@@ -84,7 +84,7 @@ int main()
 
 
     // Function
-    cdhall_funapp funapp = {
+    cdhall_func_spec funapp = {
         {CDHALL_TYPE_NAT, NULL},
         {CDHALL_TYPE_NAT, NULL}
     };
@@ -98,7 +98,7 @@ int main()
     assert(nOut == 120);
 
     cdhall_type_spec dArraySpec = {CDHALL_TYPE_DOUBLE, NULL};
-    cdhall_funapp funapp2 = {
+    cdhall_func_spec funapp2 = {
         {CDHALL_TYPE_RECORD, &test_struct_rec},
         {CDHALL_TYPE_ARRAY, &dArraySpec}
     };

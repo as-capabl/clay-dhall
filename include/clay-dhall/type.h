@@ -71,7 +71,7 @@ typedef struct {
 typedef struct {
     cdhall_type_spec  argSpec;
     cdhall_type_spec  resultSpec;
-} cdhall_funapp;
+} cdhall_func_spec;
 
 /*! \} */
 
