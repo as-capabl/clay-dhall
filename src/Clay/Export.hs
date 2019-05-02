@@ -201,7 +201,7 @@ foreign export ccall hsc_embed :: Ptr CDhallTypedPtr -> IO (StablePtr Obj)
 hsc_embed p =
   do
     CDhallTypedPtr{..} <- peekTypedPtr p
-    CDhallTypeHolder{..} <- typeSpecBy tptrSpec
+    CDhallTypeHolder{..} <- typeSpecBy =<< peek tptrSpec
 
     it <- thPeek tptrPtr 
     newStablePtr . exprToObj $ Dh.embed it ()
@@ -268,7 +268,7 @@ hsc_add_builtin stg csName nArg pArgPtr resPtr fin pUData evalPtr =
   do
     !name <- T.decodeUtf8 <$> B.unsafePackCString csName
     args <- typeSpecByN nArg pArgPtr
-    res <- typeSpecBy resPtr
+    res <- typeSpecBy =<< peek resPtr
     pForeign <- if pUData /= nullPtr then newForeignPtr fin pUData else newForeignPtr_ pUData
 
     let -- Context
