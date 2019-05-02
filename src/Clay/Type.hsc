@@ -142,6 +142,25 @@ instance Storable CDhallUnionSpec
     sizeOf _ = #{size cdhall_union_spec}
     alignment _ = #{alignment cdhall_union_spec}
 
+data CDhallUnion = CDhallUnion {
+    unionIndex :: CDhallInt,
+    unionData :: Ptr ()
+  } -- Size varying struct. Not storable.
+
+peekUnion :: Ptr () -> IO CDhallUnion
+peekUnion p =
+  do
+    unionIndex <- #{peek cdhall_union, index} p
+    let unionData = p `plusPtr` #{offset cdhall_union, data}
+    return CDhallUnion {..}
+
+pokeUnion :: CDhallInt -> (Ptr () -> IO ()) -> Ptr () -> IO ()
+pokeUnion i oldPoke p = 
+  do
+    #{poke cdhall_union, index} (castPtr p) i 
+    oldPoke (p `plusPtr` unionOffset)
+  
+
 unionOffset :: Int
 unionOffset = #{offset cdhall_union, data}
 
@@ -262,12 +281,6 @@ peekAsArray declaredIn elemSize pt pCDhallArray =
         declaredOut = DhC.App DhC.List declaredIn
     return $ Dh.InputType embedOut declaredOut
 
-asUnionItem :: CDhallInt -> PokeFunc -> PokeFunc
-asUnionItem i oldPoke = \p ->
-  do
-    #{poke cdhall_union, index} (castPtr p) i 
-    oldPoke (p `plusPtr` unionOffset)
-
 noPoke :: PokeFunc
 noPoke _ = return ()
 
@@ -298,7 +311,7 @@ unionHolder CDhallUnionSpec{..} =
         CDhallUItemSpec {..} <- peekElemOff unionItems (fromIntegral i)
         txtName <- T.decodeUtf8 <$> B.unsafePackCString uitemName
         sp <- typeSpecBy uitemType
-        let uitem = asUnionItem i <$> thPoke sp
+        let uitem = pokeUnion i <$> thPoke sp
         return (txtName, (thPeek sp, uitem))
 
     let tp = DhMap.fromList l
@@ -306,10 +319,11 @@ unionHolder CDhallUnionSpec{..} =
     return $ CDhallTypeHolder {
         thPeek = \p ->
           do
-            i <- (fromIntegral :: CDhallInt -> Int) <$> #{peek cdhall_union, index} (castPtr p)
+            CDhallUnion {..} <- peekUnion (castPtr p)
+            let i = fromIntegral unionIndex 
             let txtName = fst (l !! i)
                 peeker = fst . snd $ l !! i
-            pk <- peeker (p `plusPtr` unionOffset)
+            pk <- peeker unionData
             return $ Dh.InputType {
                 embed = \() -> DhC.UnionLit txtName (Dh.embed pk ()) (Dh.expected . snd <$> DhMap.delete txtName tp),
                 declared = DhC.Union $ Dh.expected . snd <$> tp
@@ -363,9 +377,9 @@ typeSpecBy CDhallTypeSpec {..} =
             return $ CDhallTypeHolder {
                 thPeek = \p ->
                   do
-                    i <- #{peek cdhall_union, index} (castPtr p) :: IO CDhallInt
-                    mx <- if i == coptSome
-                        then Just <$> thPeek sp (p `plusPtr` unionOffset)
+                    CDhallUnion {..} <- peekUnion (castPtr p)
+                    mx <- if unionIndex == coptSome
+                        then Just <$> thPeek sp unionData
                         else return Nothing
                     let spExpected = Dh.expected $ thPoke sp
                     return $ Dh.InputType {
@@ -373,7 +387,7 @@ typeSpecBy CDhallTypeSpec {..} =
                         declared = DhC.App DhC.Optional spExpected
                       }
                     ,
-                thPoke = maybe (asUnionItem coptNone noPoke) (asUnionItem coptSome) <$> Dh.maybe (thPoke sp),
+                thPoke = maybe (pokeUnion coptNone noPoke) (pokeUnion coptSome) <$> Dh.maybe (thPoke sp),
                 thSizeOf = thSizeOf sp + unionOffset
               }
         | typeId == tRecord ->
