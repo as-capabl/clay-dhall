@@ -260,8 +260,8 @@ foreign import ccall "dynamic"
 foreign export ccall hsc_add_builtin ::
     Ptr (StablePtr Obj) ->
     CString -> -- Builtin function name
-    CDhallInt-> Ptr CDhallTypeHolder -> -- Arguments
-    Ptr CDhallTypeHolder -> -- Result type
+    CDhallInt-> Ptr CDhallTypeSpec -> -- Arguments
+    Ptr CDhallTypeSpec -> -- Result type
     FinalizerPtr UserData -> Ptr UserData -> FunPtr BuiltinImpl -> -- callback routine
     IO ()
 hsc_add_builtin stg csName nArg pArgPtr resPtr fin pUData evalPtr =

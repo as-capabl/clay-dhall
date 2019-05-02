@@ -57,7 +57,7 @@ type CDhallDouble = #{type double}
 
 
 data CDhallTypedPtr = CDhallTypedPtr {
-    tptrSpec :: Ptr CDhallTypeHolder,
+    tptrSpec :: Ptr CDhallTypeSpec,
     tptrPtr :: Ptr ()
   }
 
@@ -192,10 +192,10 @@ asUnionItem i oldPoke = \p ->
 noPoke :: PokeFunc
 noPoke _ = return ()
 
-typeSpecBy :: Ptr CDhallTypeHolder -> IO CDhallTypeHolder
+typeSpecBy :: Ptr CDhallTypeSpec -> IO CDhallTypeHolder
 typeSpecBy p =
   do
-    CDhallTypeSpec {..} <- peek (castPtr p)
+    CDhallTypeSpec {..} <- peek p
     if
         | typeId == tBool -> return $ holderStorable
             ((\b -> return $ if b then 1 else 0) :: Bool -> IO CBool)
@@ -336,7 +336,7 @@ typeSpecBy p =
                 thSizeOf = sizeOf (sizeDummy :: Ptr Obj)
               }
 
-typeSpecByN :: CDhallInt -> Ptr CDhallTypeHolder -> IO (V.Vector CDhallTypeHolder)
+typeSpecByN :: CDhallInt -> Ptr CDhallTypeSpec -> IO (V.Vector CDhallTypeHolder)
 typeSpecByN n p = V.generateM (fromIntegral n) $ \i ->
     typeSpecBy $ p `plusPtr` (#{size cdhall_type_spec} * i)
 
