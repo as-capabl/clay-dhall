@@ -155,83 +155,82 @@ unionHolder CDhallUnionSpec{..} =
       }
 
 typeSpecBy :: CDhallTypeSpec -> IO CDhallTypeHolder
-typeSpecBy CDhallTypeSpec {..} =
-    if
-        | typeId == tBool -> return $ holderStorable
-            ((\b -> return $ if b then 1 else 0) :: Bool -> IO CBool)
-            (\cb -> return $ cb /= 0)
-        | typeId == tNat -> return $ holderStorable
-            (return . fromIntegral :: Dh.Natural -> IO CDhallWord)
-            (return . fromIntegral)
-        | typeId == tInt -> return $ holderStorable
-            (return . fromIntegral :: Integer -> IO CDhallInt)
-            (return . fromIntegral)
-        | typeId == tString -> return $ holderStorable
-            (allocCopyCS . T.encodeUtf8 :: T.Text -> IO CString)
-            (\cs -> T.decodeUtf8 <$> B.unsafePackCString cs)
-        | typeId == tDouble -> return $ holderStorable
-            (return . realToFrac :: Double -> IO CDhallDouble)
-            (return . realToFrac)
-        | typeId == tArray ->
-          do
-            CDhallTypeHolder{..} <- typeSpecBy =<< peek (castPtr detail)
-            return $ CDhallTypeHolder {
-                thPeek = peekAsArray (Dh.expected thPoke) thSizeOf thPeek,
-                thPoke = allocAndPokeArray thSizeOf <$> Dh.vector thPoke,
-                thSizeOf = sizeOf (sizeDummy :: CDhallArray)
-              }
-        | typeId == tUnit ->
-            return $ CDhallTypeHolder {
-                thPeek = \_ -> return (Dh.inject),
-                thPoke = noPoke <$ Dh.unit,
-                thSizeOf = 1
-              }
-        | typeId == tOptional ->
-          do
-            sp <- typeSpecBy =<< peek (castPtr detail)
-            return $ CDhallTypeHolder {
-                thPeek = \p ->
-                  do
-                    CDhallUnion {..} <- peekUnion (castPtr p)
-                    mx <- if unionIndex == coptSome
-                        then Just <$> thPeek sp unionData
-                        else return Nothing
-                    let spExpected = Dh.expected $ thPoke sp
-                    return $ Dh.InputType {
-                        embed = \() -> DhC.OptionalLit spExpected (flip Dh.embed () <$> mx),
-                        declared = DhC.App DhC.Optional spExpected
-                      }
-                    ,
-                thPoke = maybe (pokeUnion coptNone noPoke) (pokeUnion coptSome) <$> Dh.maybe (thPoke sp),
-                thSizeOf = thSizeOf sp + unionOffset
-              }
-        | typeId == tRecord ->
-            peek (castPtr detail) >>= recordHolder
-        | typeId == tUnion ->
-            peek (castPtr detail) >>= unionHolder
-        | typeId == tFunction ->
-          do
-            argSpec <- typeSpecBy =<< peek (funcArgSpec detail)
-            resultSpec <- typeSpecBy =<< peek (funcResultSpec detail)
+typeSpecBy CDhallTypeSpec {..} 
+    | typeId == tBool = return $ holderStorable
+        ((\b -> return $ if b then 1 else 0) :: Bool -> IO CBool)
+        (\cb -> return $ cb /= 0)
+    | typeId == tNat = return $ holderStorable
+        (return . fromIntegral :: Dh.Natural -> IO CDhallWord)
+        (return . fromIntegral)
+    | typeId == tInt = return $ holderStorable
+        (return . fromIntegral :: Integer -> IO CDhallInt)
+        (return . fromIntegral)
+    | typeId == tString = return $ holderStorable
+        (allocCopyCS . T.encodeUtf8 :: T.Text -> IO CString)
+        (\cs -> T.decodeUtf8 <$> B.unsafePackCString cs)
+    | typeId == tDouble = return $ holderStorable
+        (return . realToFrac :: Double -> IO CDhallDouble)
+        (return . realToFrac)
+    | typeId == tArray =
+      do
+        CDhallTypeHolder{..} <- typeSpecBy =<< peek (castPtr detail)
+        return $ CDhallTypeHolder {
+            thPeek = peekAsArray (Dh.expected thPoke) thSizeOf thPeek,
+            thPoke = allocAndPokeArray thSizeOf <$> Dh.vector thPoke,
+            thSizeOf = sizeOf (sizeDummy :: CDhallArray)
+          }
+    | typeId == tUnit =
+        return $ CDhallTypeHolder {
+            thPeek = \_ -> return (Dh.inject),
+            thPoke = noPoke <$ Dh.unit,
+            thSizeOf = 1
+          }
+    | typeId == tOptional =
+      do
+        sp <- typeSpecBy =<< peek (castPtr detail)
+        return $ CDhallTypeHolder {
+            thPeek = \p ->
+              do
+                CDhallUnion {..} <- peekUnion (castPtr p)
+                mx <- if unionIndex == coptSome
+                    then Just <$> thPeek sp unionData
+                    else return Nothing
+                let spExpected = Dh.expected $ thPoke sp
+                return $ Dh.InputType {
+                    embed = \() -> DhC.OptionalLit spExpected (flip Dh.embed () <$> mx),
+                    declared = DhC.App DhC.Optional spExpected
+                    }
+                ,
+            thPoke = maybe (pokeUnion coptNone noPoke) (pokeUnion coptSome) <$> Dh.maybe (thPoke sp),
+            thSizeOf = thSizeOf sp + unionOffset
+          }
+    | typeId == tRecord =
+        peek (castPtr detail) >>= recordHolder
+    | typeId == tUnion =
+        peek (castPtr detail) >>= unionHolder
+    | typeId == tFunction =
+      do
+        argSpec <- typeSpecBy =<< peek (funcArgSpec detail)
+        resultSpec <- typeSpecBy =<< peek (funcResultSpec detail)
 
-            return $ CDhallTypeHolder {
-                thPeek = error "Function input is not allowed",
-                thPoke = Dh.Type {
-                    extract = \e -> Just $ \pTEFunc ->
+        return $ CDhallTypeHolder {
+            thPeek = error "Function input is not allowed",
+            thPoke = Dh.Type {
+                extract = \e -> Just $ \pTEFunc ->
+                  do
+                    s <- newStablePtr $ teFuncToObj $ \pArg pDest ->
                       do
-                        s <- newStablePtr $ teFuncToObj $ \pArg pDest ->
-                          do
-                            argInput <- thPeek argSpec pArg
-                            case Dh.extract (thPoke resultSpec) (DhC.normalize (DhC.App e (Dh.embed argInput ())))
-                              of
-                                Just o -> o pDest
-                                Nothing -> error "Type mismatch at typeId == tFunction"
-                        poke (castPtr pTEFunc) s        
-                        ,
-                    expected = DhC.Pi "_" (Dh.expected (thPoke argSpec)) (Dh.expected (thPoke resultSpec))
-                  },
-                thSizeOf = sizeOf (sizeDummy :: Ptr Obj)
-              }
+                        argInput <- thPeek argSpec pArg
+                        case Dh.extract (thPoke resultSpec) (DhC.normalize (DhC.App e (Dh.embed argInput ())))
+                          of
+                            Just o -> o pDest
+                            Nothing -> error "Type mismatch at typeId == tFunction"
+                    poke (castPtr pTEFunc) s        
+                    ,
+                expected = DhC.Pi "_" (Dh.expected (thPoke argSpec)) (Dh.expected (thPoke resultSpec))
+              },
+            thSizeOf = sizeOf (sizeDummy :: Ptr Obj)
+          }
 
 typeSpecByN :: CDhallInt -> Ptr CDhallTypeSpec -> IO (V.Vector CDhallTypeHolder)
 typeSpecByN n p = V.generateM (fromIntegral n) $ \i -> peekElemOff p i >>= typeSpecBy
