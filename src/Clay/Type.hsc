@@ -168,7 +168,7 @@ type CDhallTypeId = #{type cdhall_type}
     tOptional = CDHALL_TYPE_OPTIONAL,
     tRecord = CDHALL_TYPE_RECORD,
     tUnion = CDHALL_TYPE_UNION,
-    tFunApp = CDHALL_TYPE_FUNAPP
+    tFunction = CDHALL_TYPE_FUNCTION
 }
 
 #{enum CDhallInt,,
@@ -356,7 +356,7 @@ typeSpecBy p =
             peek (castPtr detail) >>= recordHolder
         | typeId == tUnion ->
             peek (castPtr detail) >>= unionHolder
-        | typeId == tFunApp ->
+        | typeId == tFunction ->
           do
             argSpec <- typeSpecBy $ funcArgSpec detail
             resultSpec <- typeSpecBy $ funcResultSpec detail
@@ -372,7 +372,7 @@ typeSpecBy p =
                             case Dh.extract (thPoke resultSpec) (DhC.normalize (DhC.App e (Dh.embed argInput ())))
                               of
                                 Just o -> o pDest
-                                Nothing -> error "Type mismatch at typeId == tFunApp"
+                                Nothing -> error "Type mismatch at typeId == tFunction"
                         poke (castPtr pTEFunc) s        
                         ,
                     expected = DhC.Pi "_" (Dh.expected (thPoke argSpec)) (Dh.expected (thPoke resultSpec))

@@ -21,9 +21,10 @@ typedef uint_fast32_t cdhall_uint;
     CDHALL_TYPE_DOUBLE  | (not concerned)  | double       | -
     CDHALL_TYPE_ARRAY   | cdhall_type_spec*| cdhall_array | cdhall_free_array
     CDHALL_TYPE_UNIT    | (not concerned)  | (none)       | -
-    CDHALL_TYPE_OPTION  |||
+    CDHALL_TYPE_OPTION  | cdhall_type_spec*| cdhall_union | -
     CDHALL_TYPE_RECORD  | cdhall_record_spec*| T          | -
     CDHALL_TYPE_UNION   | cdhall_union_spec*| cdhall_union | -
+    CDHALL_TYPE_FUNCTION | cdhall_func_spec*| cdhall_objptr | cdhall_free_object
  */
 /* \{ */
 typedef enum {
@@ -37,7 +38,7 @@ typedef enum {
     CDHALL_TYPE_OPTIONAL,
     CDHALL_TYPE_RECORD,
     CDHALL_TYPE_UNION,
-    CDHALL_TYPE_FUNAPP
+    CDHALL_TYPE_FUNCTION
 } cdhall_type;
 
 typedef struct {

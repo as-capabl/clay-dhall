@@ -89,7 +89,7 @@ int main()
         {CDHALL_TYPE_NAT, NULL}
     };
     cdhall_objptr  fun1;
-    cdhall_typed_ptr hFunapp = {{CDHALL_TYPE_FUNAPP, &funapp}, &fun1};
+    cdhall_typed_ptr hFunapp = {{CDHALL_TYPE_FUNCTION, &funapp}, &fun1};
     cdhall_input("λ(n : Natural) -> n * 10", hFunapp);
     const cdhall_uint nIn = 12;
     cdhall_uint nOut;
@@ -103,7 +103,7 @@ int main()
         {CDHALL_TYPE_ARRAY, &dArraySpec}
     };
     cdhall_objptr  fun2;
-    cdhall_typed_ptr hFunapp2 = {{CDHALL_TYPE_FUNAPP, &funapp2}, &fun2};
+    cdhall_typed_ptr hFunapp2 = {{CDHALL_TYPE_FUNCTION, &funapp2}, &fun2};
     cdhall_input("λ(ts : {testI : Integer, testD : Double}) -> [ts.testD]", hFunapp2);
     const test_struct tsIn = {5, 20.0};
     cdhall_array arrayOut;
