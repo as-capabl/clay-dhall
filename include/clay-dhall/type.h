@@ -7,24 +7,24 @@ typedef uint_fast32_t cdhall_uint;
 // typedef int32_t cdhall_hashval;
 
 /*! -------------------
-    \defgroup group_type_spec Type spec descriptors.
+    \defgroup group_type_spec Type spec descriptors
 
     \details
     Describe the mapping between types of Dhall and host language.
 
-    Value of `typeId`   | Value of `detail`| C Type       | Finalizer for C Type
-    --------------------|------------------|--------------|----------------------
-    CDHALL_TYPE_BOOL    | (not concerned)  | bool         | -
-    CDHALL_TYPE_NAT     | (not concerned)  | cdhall_uint  | -
-    CDHALL_TYPE_INT     | (not concerned)  | cdhall_int   | -
-    CDHALL_TYPE_STRING  | (not concerned)  | char*        | cdhall_free_array
-    CDHALL_TYPE_DOUBLE  | (not concerned)  | double       | -
-    CDHALL_TYPE_ARRAY   | cdhall_type_spec*| cdhall_array | cdhall_free_array
-    CDHALL_TYPE_UNIT    | (not concerned)  | (none)       | -
-    CDHALL_TYPE_OPTION  | cdhall_type_spec*| cdhall_union | -
-    CDHALL_TYPE_RECORD  | cdhall_record_spec*| T          | -
-    CDHALL_TYPE_UNION   | cdhall_union_spec*| cdhall_union | -
-    CDHALL_TYPE_FUNCTION | cdhall_func_spec*| cdhall_objptr | cdhall_free_object
+    Dhall Type         | Value of `typeId`   | Value of `detail`| C Type       | Finalizer for C Type
+    -------------------|--------------------|------------------|--------------|----------------------
+    Bool               | CDHALL_TYPE_BOOL    | (not concerned)  | bool         | -
+    Natural            | CDHALL_TYPE_NAT     | (not concerned)  | cdhall_uint  | -
+    Integer            | CDHALL_TYPE_INT     | (not concerned)  | cdhall_int   | -
+    Text               | CDHALL_TYPE_STRING  | (not concerned)  | char*        | cdhall_free_array
+    Double             | CDHALL_TYPE_DOUBLE  | (not concerned)  | double       | -
+    List ([a])         | CDHALL_TYPE_ARRAY   | cdhall_type_spec*| cdhall_array | cdhall_free_array
+    Unit type ({})     | CDHALL_TYPE_UNIT    | (not concerned)  | (none)       | -
+    Optional a         | CDHALL_TYPE_OPTION  | cdhall_type_spec*| cdhall_union | -
+    Record ({.., ..})  | CDHALL_TYPE_RECORD  | cdhall_record_spec*| T          | -
+    Union (<.., ..>)   | CDHALL_TYPE_UNION   | cdhall_union_spec*| cdhall_union | -
+    Function (a -> b)  | CDHALL_TYPE_FUNCTION | cdhall_func_spec*| cdhall_objptr | cdhall_free_object
  */
 /* \{ */
 typedef enum {
