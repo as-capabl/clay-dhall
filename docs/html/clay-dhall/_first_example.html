@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>clay-dhall: Main Page</title>
+<title>clay-dhall: First Example</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -45,7 +45,6 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
-</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -60,24 +59,19 @@ $(function() {
 </iframe>
 </div>
 
+</div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">clay-dhall Documentation</div>  </div>
+<div class="title">First Example </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="MainpageDescription"></a>
-Description</h1>
-<p>Dhall(<a href="https://github.com/dhall-lang/dhall-lang">https://github.com/dhall-lang/dhall-lang</a>), developed by Gabriel Gonzalez, is strictly typed, total (guaranteed to terminate, not turing complete) computer language. Dhall is a good language to describe data, configuration, and so on.</p>
-<p>This library is a C binding of Dhall, which calls the Haskell implementation of Dhall via FFI. Dhall values are mapped directly into C memory representation described by the <em>spec</em> structure.</p>
-<h1><a class="anchor" id="MainpageFirstExample"></a>
-First Example</h1>
-<p>The tutorial of Dhall language is available here. <a href="https://hackage.haskell.org/package/dhall/docs/Dhall-Tutorial.html">https://hackage.haskell.org/package/dhall/docs/Dhall-Tutorial.html</a></p>
+<div class="textblock"><p>The tutorial of Dhall language is available here. <a href="https://hackage.haskell.org/package/dhall/docs/Dhall-Tutorial.html">https://hackage.haskell.org/package/dhall/docs/Dhall-Tutorial.html</a></p>
 <p>This documentation is about C bindings of it.</p>
 <p>As the first example, let's interpret an expression <code>True || False</code> whose expected type is <code>Bool</code></p>
 <p>clay-dhall's include file is below.</p>
-<p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;clay-dhall/clay-dhall.h&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;clay-dhall/macro.h&gt;</span></div></div><!-- fragment --></p>
+<p><div class="fragment"><div class="line">#include &lt;clay-dhall/clay-dhall.h&gt;</div><div class="line">#include &lt;clay-dhall/macro.h&gt;</div></div><!-- fragment --></p>
 <p>Call <code>cdhall_init</code> before all the other API call.</p>
-<p><div class="fragment"><div class="line">    <a class="code" href="group__group__general.html#ga3283b3a018f69570fd22bf470fc2d85a">cdhall_init</a>(NULL, NULL);</div></div><!-- fragment --></p>
+<p><div class="fragment"><div class="line">    cdhall_init(NULL, NULL);</div></div><!-- fragment --></p>
 <p>Then let's start interpretation. In this example the resulting value is <code>Bool</code>.</p>
 <p>You should consult the table at the <a class="el" href="group__group__type__spec.html">Type spec descriptors</a> page.</p>
 <p>For the type <code>Bool</code>, you can get information below.</p>
@@ -98,17 +92,17 @@ First Example</h1>
 <p>Before interpreting an expression, several things need to be prepared along with this table.</p>
 <p>First, construct <code><a class="el" href="structcdhall__type__spec.html">cdhall_type_spec</a></code> to describe a type you expect. The first member <code>typeId</code> specifies the type. Second member <code>detail</code> is used to describe compound types.</p>
 <p>Appropreate value for <code>Bool</code> is already shown at the table above.</p>
-<p><div class="fragment"><div class="line">    <a class="code" href="structcdhall__type__spec.html">cdhall_type_spec</a> specBool = {CDHALL_TYPE_BOOL, NULL};</div></div><!-- fragment --></p>
+<p><div class="fragment"><div class="line">    cdhall_type_spec specBool = {CDHALL_TYPE_BOOL, NULL};</div></div><!-- fragment --></p>
 <p>Note that <code>detail</code> is not concerned so it may be <code>NULL</code>.</p>
 <p>Next, prepare a memory place to store an input value of the type.</p>
 <p>For <code>Bool</code>, the corresponding C type is <code>bool</code>.</p>
-<p><div class="fragment"><div class="line">    <span class="keywordtype">bool</span> b;</div></div><!-- fragment --></p>
+<p><div class="fragment"><div class="line">    bool b;</div></div><!-- fragment --></p>
 <p>Then you can construct <code><a class="el" href="structcdhall__typed__ptr.html">cdhall_typed_ptr</a></code>, a typed pointer by putting together with the pointer to the store place and the type spec.</p>
-<p><div class="fragment"><div class="line">    <a class="code" href="structcdhall__typed__ptr.html">cdhall_typed_ptr</a> hB = {specBool, &amp;b};</div></div><!-- fragment --></p>
+<p><div class="fragment"><div class="line">    cdhall_typed_ptr hB = {specBool, &amp;b};</div></div><!-- fragment --></p>
 <p>Now you can receive the interpreted value by passing the typed pointer to the input API.</p>
-<p><div class="fragment"><div class="line">    cdhall_input(<span class="stringliteral">&quot;True || False&quot;</span>, hB);</div><div class="line">    assert(b); <span class="comment">// b == (True || False) == True</span></div></div><!-- fragment --></p>
+<p><div class="fragment"><div class="line">    cdhall_input(&quot;True || False&quot;, hB);</div><div class="line">    assert(b); // b == (True || False) == True</div></div><!-- fragment --></p>
 <p>Actually, for simple type, which means whose value of <code>detail</code> is not concerned, typed pointer can be constructed immediately using a generic macro.</p>
-<p><div class="fragment"><div class="line">    </div><div class="line">    <span class="comment">// Bool ----</span></div><div class="line">    <span class="keywordtype">bool</span> b2;</div><div class="line">    cdhall_input(<span class="stringliteral">&quot;True &amp;&amp; False&quot;</span>, CDHALL_TPTR_SIMPLE(&amp;b2));</div><div class="line">    assert(!b2);</div></div><!-- fragment --> </p>
+<p><div class="fragment"><div class="line">    </div><div class="line">    // Bool ----</div><div class="line">    bool b2;</div><div class="line">    cdhall_input(&quot;True &amp;&amp; False&quot;, CDHALL_TPTR_SIMPLE(&amp;b2));</div><div class="line">    assert(!b2);</div></div><!-- fragment --> </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

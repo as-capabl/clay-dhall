@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['host_20types_2e',['Host types.',['../group__group__host__type.html',1,'']]]
+  ['getting_20error_20message',['Getting error message',['../group__group__error.html',1,'']]]
 ];

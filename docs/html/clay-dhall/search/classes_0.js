@@ -2,7 +2,7 @@ var searchData=
 [
   ['cdhall_5farray',['cdhall_array',['../structcdhall__array.html',1,'']]],
   ['cdhall_5ffield_5fspec',['cdhall_field_spec',['../structcdhall__field__spec.html',1,'']]],
-  ['cdhall_5ffunapp',['cdhall_funapp',['../structcdhall__funapp.html',1,'']]],
+  ['cdhall_5ffunc_5fspec',['cdhall_func_spec',['../structcdhall__func__spec.html',1,'']]],
   ['cdhall_5fobj_5f',['cdhall_obj_',['../structcdhall__obj__.html',1,'']]],
   ['cdhall_5frecord_5fspec',['cdhall_record_spec',['../structcdhall__record__spec.html',1,'']]],
   ['cdhall_5ftype_5fspec',['cdhall_type_spec',['../structcdhall__type__spec.html',1,'']]],

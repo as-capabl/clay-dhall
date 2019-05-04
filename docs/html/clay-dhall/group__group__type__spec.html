@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>clay-dhall: Type spec descriptors.</title>
+<title>clay-dhall: Type spec descriptors</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -65,7 +65,7 @@ $(function() {
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
-<div class="title">Type spec descriptors.</div>  </div>
+<div class="title">Type spec descriptors</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
@@ -81,7 +81,7 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcdhall__union__spec.html">cdhall_union_spec</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcdhall__funapp.html">cdhall_funapp</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcdhall__func__spec.html">cdhall_func_spec</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
@@ -99,7 +99,7 @@ Enumerations</h2></td></tr>
 <br />
 &#160;&#160;<b>CDHALL_TYPE_RECORD</b>, 
 <b>CDHALL_TYPE_UNION</b>, 
-<b>CDHALL_TYPE_FUNAPP</b>
+<b>CDHALL_TYPE_FUNCTION</b>
 <br />
  }</td></tr>
 <tr class="separator:ga8002a674a1efbead58f81a7d5f255aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -109,23 +109,30 @@ Enumerations</h2></td></tr>
 <p>Describe the mapping between types of Dhall and host language.</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Value of <code>typeId</code>  </th><th class="markdownTableHeadNone">Value of <code>detail</code>  </th><th class="markdownTableHeadNone">C Type  </th><th class="markdownTableHeadNone">Finalizer for C Type   </th></tr>
+<th class="markdownTableHeadNone">Dhall Type  </th><th class="markdownTableHeadNone">Value of <code>typeId</code>  </th><th class="markdownTableHeadNone">Value of <code>detail</code>  </th><th class="markdownTableHeadNone">C Type  </th><th class="markdownTableHeadNone">Finalizer for C Type   </th></tr>
 <tr class="markdownTableBody" class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">CDHALL_TYPE_BOOL  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">bool  </td><td class="markdownTableBodyNone">-   </td></tr>
+<td class="markdownTableBodyNone">Bool  </td><td class="markdownTableBodyNone">CDHALL_TYPE_BOOL  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">bool  </td><td class="markdownTableBodyNone">-   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowEven">
-<td class="markdownTableBodyNone">CDHALL_TYPE_NAT  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">cdhall_uint  </td><td class="markdownTableBodyNone">-   </td></tr>
+<td class="markdownTableBodyNone">Natural  </td><td class="markdownTableBodyNone">CDHALL_TYPE_NAT  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">cdhall_uint  </td><td class="markdownTableBodyNone">-   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">CDHALL_TYPE_INT  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">cdhall_int  </td><td class="markdownTableBodyNone">-   </td></tr>
+<td class="markdownTableBodyNone">Integer  </td><td class="markdownTableBodyNone">CDHALL_TYPE_INT  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">cdhall_int  </td><td class="markdownTableBodyNone">-   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowEven">
-<td class="markdownTableBodyNone">CDHALL_TYPE_STRING  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">char*  </td><td class="markdownTableBodyNone">cdhall_free_array   </td></tr>
+<td class="markdownTableBodyNone">Text  </td><td class="markdownTableBodyNone">CDHALL_TYPE_STRING  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">char*  </td><td class="markdownTableBodyNone">cdhall_free_array   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">CDHALL_TYPE_DOUBLE  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">double  </td><td class="markdownTableBodyNone">-   </td></tr>
+<td class="markdownTableBodyNone">Double  </td><td class="markdownTableBodyNone">CDHALL_TYPE_DOUBLE  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">double  </td><td class="markdownTableBodyNone">-   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowEven">
-<td class="markdownTableBodyNone">CDHALL_TYPE_ARRAY  </td><td class="markdownTableBodyNone">cdhall_type_spec*  </td><td class="markdownTableBodyNone"><a class="el" href="structcdhall__array.html">cdhall_array</a>  </td><td class="markdownTableBodyNone">cdhall_free_array   </td></tr>
+<td class="markdownTableBodyNone">List ([a])  </td><td class="markdownTableBodyNone">CDHALL_TYPE_ARRAY  </td><td class="markdownTableBodyNone">cdhall_type_spec*  </td><td class="markdownTableBodyNone"><a class="el" href="structcdhall__array.html">cdhall_array</a>  </td><td class="markdownTableBodyNone">cdhall_free_array   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">CDHALL_TYPE_UNIT  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">(none)  </td><td class="markdownTableBodyNone">-   </td></tr>
+<td class="markdownTableBodyNone">Unit type ({})  </td><td class="markdownTableBodyNone">CDHALL_TYPE_UNIT  </td><td class="markdownTableBodyNone">(not concerned)  </td><td class="markdownTableBodyNone">(none)  </td><td class="markdownTableBodyNone">-   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Optional a  </td><td class="markdownTableBodyNone">CDHALL_TYPE_OPTION  </td><td class="markdownTableBodyNone">cdhall_type_spec*  </td><td class="markdownTableBodyNone"><a class="el" href="structcdhall__union.html">cdhall_union</a>  </td><td class="markdownTableBodyNone">-   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Record ({.., ..})  </td><td class="markdownTableBodyNone">CDHALL_TYPE_RECORD  </td><td class="markdownTableBodyNone">cdhall_record_spec*  </td><td class="markdownTableBodyNone">T  </td><td class="markdownTableBodyNone">-   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Union (&lt;.., ..&gt;)  </td><td class="markdownTableBodyNone">CDHALL_TYPE_UNION  </td><td class="markdownTableBodyNone">cdhall_union_spec*  </td><td class="markdownTableBodyNone"><a class="el" href="structcdhall__union.html">cdhall_union</a>  </td><td class="markdownTableBodyNone">-   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Function (a -&gt; b)  </td><td class="markdownTableBodyNone">CDHALL_TYPE_FUNCTION  </td><td class="markdownTableBodyNone">cdhall_func_spec*  </td><td class="markdownTableBodyNone">cdhall_objptr  </td><td class="markdownTableBodyNone">cdhall_free_object   </td></tr>
 </table>
-<p>CDHALL_TYPE_OPTION ||| CDHALL_TYPE_RECORD | cdhall_record_spec*| T | - CDHALL_TYPE_UNION | cdhall_union_spec*| <a class="el" href="structcdhall__union.html">cdhall_union</a> | - </p>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
