@@ -10,6 +10,10 @@ path-constant dist-dir
         ]
     ;
 
+path-constant cabal-file
+    : ./clay-dhall.cabal
+    ;
+
 lib claydhall_test_link
     :
     : <name>clay-dhall <search>$(dist-dir)/build/clay-dhall
