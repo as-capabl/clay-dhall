@@ -1,4 +1,7 @@
 packages: ./clay-dhall.cabal
 
+package clay-dhall
+  flags: -new-build-helper
+
 package cabal-plan
   flags: +exe +license-report
