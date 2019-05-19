@@ -23,6 +23,12 @@ DLL_EXPORT void STDCALL cdhall_exit(void)
     hs_exit();
 }
 
+//! Perform garbage collection
+DLL_EXPORT void STDCALL cdhall_perform_gc(void)
+{
+    hs_perform_gc();
+}
+
 DLL_EXPORT void* STDCALL cdhall_alloc_array(size_t size)
 {
     return malloc(size);

@@ -54,6 +54,8 @@ int main()
     assert(unitArray.size == 5);
     cdhall_free_array(unitArray.elem);
 
+    cdhall_perform_gc(); // This is the test for `cdhall_perform_gc`
+
     // Option
     cdhall_union* pOn = malloc(CDHALL_UNION_REQUIRED_SIZE(cdhall_uint)); 
     cdhall_typed_ptr hOn = {{CDHALL_TYPE_OPTIONAL, &hArrayElem}, pOn};

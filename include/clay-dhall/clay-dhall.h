@@ -59,6 +59,9 @@ DLL_EXPORT void STDCALL cdhall_init_with_args(int argc, char* argv[]);
 //! Terminate the library
 DLL_EXPORT void STDCALL cdhall_exit(void);
 
+//! Perform garbage collection
+DLL_EXPORT void STDCALL cdhall_perform_gc(void);
+
 //! A synonym of malloc.
 DLL_EXPORT void* STDCALL cdhall_alloc_array(size_t size);
 

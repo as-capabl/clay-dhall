@@ -25,7 +25,7 @@ Current Status
 Working toward the 1st release.
 
 - [x] APIs to get error messages
-- [ ] PerformGC API
+- [x] PerformGC API
 - [ ] Full documentation
 - [ ] Installation
 
