@@ -20,16 +20,16 @@ static const cdhall_record_spec test_struct_rec =
 
 // Test union
 typedef union {
-    cdhall_int  i;
-    test_struct  ts;
+    cdhall_int  I;
+    test_struct  Ts;
 } test_union;
 
 static const cdhall_uitem_spec test_union_items[] = {
-    {"I", {CDHALL_TYPE_INT, NULL}},
-    {"Ts", {CDHALL_TYPE_RECORD, &test_struct_rec}}
+    CDHALL_DEF_UITEM_SIMPLE(test_union, I),
+    CDHALL_DEF_UITEM(test_union, CDHALL_TYPE_RECORD, &test_struct_rec, Ts),
 };
 
-static const cdhall_union_spec test_union_spec = {2, sizeof(test_union), test_union_items};
+static const cdhall_union_spec test_union_spec = CDHALL_DEF_UNION(test_union, test_union_items);
 
 int main()
 {
@@ -79,7 +79,7 @@ int main()
     cdhall_typed_ptr hU = {{CDHALL_TYPE_UNION, &test_union_spec}, pU};
     cdhall_input("<Ts = {testI = +999, testD = 12.0} | I : Integer>", hU);
     assert(pU->index == 1);
-    test_struct ts2 = ((test_union*)pU->data)->ts;
+    test_struct ts2 = ((test_union*)pU->data)->Ts;
     assert(ts2.testI == 999);
     assert(ts2.testD == 12.0);
     free(pU);
