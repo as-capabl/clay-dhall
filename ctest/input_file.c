@@ -34,7 +34,7 @@ void free_person(person_t* p)
 int main(int argc, char* argv[])
 {
     assert(argc == 2);
-    cdhall_init(NULL, NULL);
+    cdhall_init();
     
     cdhall_array array;
     cdhall_typed_ptr hArray = {{CDHALL_TYPE_ARRAY, &person_t_spec}, &array};

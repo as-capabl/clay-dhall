@@ -25,7 +25,7 @@ cdhall_objptr mult_double_impl(void* p, const cdhall_objptr* pArg)
 
 int main()
 {
-    cdhall_init(NULL, NULL);
+    cdhall_init();
 
     cdhall_objptr stg = cdhall_new_input_settings();
     cdhall_add_builtin(&stg, "mult_double", 2, mult_double_args, mult_double_ret, NULL, NULL, mult_double_impl);

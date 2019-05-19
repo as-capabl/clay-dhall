@@ -8,7 +8,7 @@
 
 int main()
 {
-    cdhall_init(NULL, NULL);
+    cdhall_init();
     
     // Initial state
     assert(cdhall_last_error_code() == CDHALL_ERROR_EMPTY);

@@ -7,7 +7,7 @@
 
 int main()
 {
-    cdhall_init(NULL, NULL);
+    cdhall_init();
     
     // `cdhall_input_expr` returns expression without evaluation.
     // Then `cdhall_extract` evaluates the expression and handle the result.

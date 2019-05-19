@@ -7,7 +7,7 @@
 
 int main()
 {
-    cdhall_init(NULL, NULL);
+    cdhall_init();
 
     cdhall_uint n = 30;
     cdhall_objptr exprN1 = cdhall_embed(CDHALL_TPTR_SIMPLE(&n));

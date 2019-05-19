@@ -7,7 +7,7 @@
 
 int main()
 {
-    cdhall_init(NULL, NULL);
+    cdhall_init();
 
     // This snippet is referred by docs/md/FirstExample.md
     cdhall_type_spec specBool = {CDHALL_TYPE_BOOL, NULL};

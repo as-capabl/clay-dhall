@@ -34,7 +34,7 @@ static const cdhall_union_spec test_union_spec = {2, sizeof(test_union), test_un
 
 int main()
 {
-    cdhall_init(NULL, NULL);
+    cdhall_init();
 
     // Array
     cdhall_uint arrayElem[] = {1, 2, 3};

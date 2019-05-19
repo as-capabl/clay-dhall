@@ -7,12 +7,17 @@
 
 cdhall_objptr  g_lasterror = NULL;
 
-DLL_EXPORT void STDCALL cdhall_init(int* argc, char** argv[])
+DLL_EXPORT void STDCALL cdhall_init(void)
 {
-    hs_init(argc, argv);
+    hs_init(NULL, NULL);
 }
 
-DLL_EXPORT void STDCALL cdhall_exit()
+DLL_EXPORT void STDCALL cdhall_init_with_args(int argc, char* argv[])
+{
+    hs_init(&argc, &argv);
+}
+
+DLL_EXPORT void STDCALL cdhall_exit(void)
 {
     if (g_lasterror) cdhall_free_object(g_lasterror);
     hs_exit();

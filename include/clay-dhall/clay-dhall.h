@@ -48,10 +48,16 @@ extern "C" {
 /* \{ */
 
 //! Initialize the library
-DLL_EXPORT void STDCALL cdhall_init(int* argc, char** argv[]);
+DLL_EXPORT void STDCALL cdhall_init(void);
+
+//! Initialize the library with GHC RTS arguments.
+//
+// \note Mainly for debugging. Acceptable options are depends on GHC  version. \n
+// See the Grasgow Haskell Compiler manual for details.
+DLL_EXPORT void STDCALL cdhall_init_with_args(int argc, char* argv[]);
 
 //! Terminate the library
-DLL_EXPORT void STDCALL cdhall_exit();
+DLL_EXPORT void STDCALL cdhall_exit(void);
 
 //! A synonym of malloc.
 DLL_EXPORT void* STDCALL cdhall_alloc_array(size_t size);
