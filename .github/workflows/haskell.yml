@@ -19,7 +19,10 @@ jobs:
         cabal install --only-dependencies
     - name: Install boost
       run: |
-        sudo apt install libboost-dev        
+        git clone https://github.com/boostorg/build.git
+        cd build
+        ./bootstrap.sh
+        ./b2 install --prefix=/usr/local
     - name: Build
       run: |
         cabal configure
