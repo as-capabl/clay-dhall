@@ -48,11 +48,11 @@ Working toward the 1st release.
 - [x] defaultEvaluateSettings :: EvaluateSettings
 - [x] defaultInputSettings :: InputSettings
 - [ ] defaultInterpretOptions :: InterpretOptions
-- [ ] detailed :: IO a -> IO a
+- ns detailed :: IO a -> IO a
 - [x] double :: Type Double
 - [x] field :: Text -> Type a -> RecordType a
 - [x] genericAuto ::
-- [ ] inject :: Inject a => InputType a
+- [x] inject :: Inject a => InputType a
   - Contains `undefined`s
 - [x] input :: Type a -> Text -> IO a
 - [x] inputExpr ::
@@ -71,7 +71,7 @@ Working toward the 1st release.
 - [x] normalizer ::
   - (Only through dhall_add_builtin)
 - ns pair :: Type a -> Type b -> Type (a, b)
-- [ ] rawInput ::
+- ns rawInput ::
 - [x] record :: RecordType a -> Type a
 - [ ] rootDirectory ::
 - [ ] scientific :: Type scientific-0.3.6.2:Data.Scientific.Scientific
@@ -84,8 +84,8 @@ Working toward the 1st release.
 - ns string :: Type String
 - [x] unit :: Type ()
 - [x] vector :: Type a -> Type (Vector a)
-- [ ] Expr
-  - [ ] Comparison (==)
+- [x] Expr
+  - [x] Comparison (==)
 
 ns = not supported
 
@@ -94,15 +94,18 @@ How to build
 
 Requirements:
 
-- Haskell stack (https://docs.haskellstack.org/en/stable/README/)
+- Haskell cabal (https://docs.haskellstack.org/en/stable/README/)
 - Boost build v2 (https://www.boost.org/doc/libs/1_50_0/tools/build/v2/index.html)
 
+### Execute Tests
 The following executes the test suite.
 
 ```
-$ stack build
+$ cabal new-build
 $ cd ctest
 $ bjam
 ```
+
+### Installation for *nix
 
 Installation for production is not yet implemented.
