@@ -29,4 +29,4 @@ jobs:
         cabal build
     - name: ctest
       run: |
-        bjam ctest
+        /usr/local/bin/b2 ctest
