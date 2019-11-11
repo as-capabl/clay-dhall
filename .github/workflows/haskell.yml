@@ -17,7 +17,13 @@ jobs:
       run: |
         cabal update
         cabal install --only-dependencies
+    - name: Install boost
+      run: |
+        sudo apt install libboost-dev        
     - name: Build
       run: |
         cabal configure
         cabal build
+    - name: ctest
+      run: |
+        bjam ctest
