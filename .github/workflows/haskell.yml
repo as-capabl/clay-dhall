@@ -22,7 +22,7 @@ jobs:
         git clone https://github.com/boostorg/build.git
         cd build
         ./bootstrap.sh
-        ./b2 install --prefix=/usr/local
+        sudo ./b2 install --prefix=/usr/local
     - name: Build
       run: |
         cabal configure
