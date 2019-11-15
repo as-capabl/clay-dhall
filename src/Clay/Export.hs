@@ -12,6 +12,8 @@ import Control.Monad (join)
 import Control.Monad.State
 import Control.Monad.Identity
 import Control.Monad.IO.Class
+import Data.Either.Validation
+import Data.Void
 
 import Foreign.C.Types (CChar)
 import Foreign.C.String
@@ -58,11 +60,11 @@ exceptionGuard act =
     (act >> return True) `Ex.catches` handlers
   where
     handlers = [
-        Ex.Handler $ \e -> putE eCDHALL_ERROR_INVALID_TYPE (e :: Dh.InvalidType),
-        Ex.Handler $ \e -> putE eCDHALL_ERROR_INVALID_TYPE (e :: DhTC.TypeError DhP.Src DhTC.X),
+        Ex.Handler $ \e -> putE eCDHALL_ERROR_INVALID_TYPE (e :: Dh.InvalidType DhP.Src Void),
+        Ex.Handler $ \e -> putE eCDHALL_ERROR_INVALID_TYPE (e :: DhTC.TypeError DhP.Src Void),
         Ex.Handler $ \e -> putE (arithErrorCode e) (e :: Ex.ArithException)
       ]
-    putE :: Ex.Exception e => ErrorCode -> e -> IO Bool  
+    putE :: Ex.Exception e => ErrorCode -> e -> IO Bool
     putE n e =
       do
         cleanLastError
@@ -196,7 +198,10 @@ hsc_extract pE p =
     e <- objToExpr <$> deRefStablePtr pE
 
     t <- asHolderType p
-    maybe (return False) (>> return True) $ Dh.extract t e 
+    case Dh.extract t e
+      of
+        Failure _ -> return False -- TODO: set last error
+        Success m -> m >> return True
 
 foreign export ccall hsc_embed :: Ptr CDhallTypedPtr -> IO (StablePtr Obj)
 hsc_embed p =
@@ -204,7 +209,7 @@ hsc_embed p =
     CDhallTypedPtr{..} <- peekTypedPtr p
     CDhallTypeHolder{..} <- typeSpecBy =<< peek tptrSpec
 
-    it <- thPeek tptrPtr 
+    it <- runPeekType thPeek tptrPtr
     newStablePtr . exprToObj $ Dh.embed it ()
 
 foreign export ccall hsc_expr_eq :: StablePtr Obj -> StablePtr Obj -> IO Bool
@@ -212,7 +217,7 @@ hsc_expr_eq x y =
   do
     xExpr <- objToExpr <$> deRefStablePtr x
     yExpr <- objToExpr <$> deRefStablePtr y
-    return $ DhC.normalize xExpr == (DhC.normalize yExpr :: DhC.Expr DhP.Src DhTC.X)
+    return $ DhC.normalize xExpr == (DhC.normalize yExpr :: DhC.Expr DhP.Src Void)
 
 {-
 instance Hashable (DhC.Expr DhP.Src DhTC.X) where {}
@@ -291,7 +296,7 @@ hsc_add_builtin stg csName nArg pArgPtr resPtr fin pUData evalPtr =
             Nothing ->
                 return ((), Nothing)
 
-        nmrz :: DhC.Expr s DhTC.X -> Maybe (DhC.Expr s DhTC.X)
+        nmrz :: DhC.Expr s Void -> Maybe (DhC.Expr s Void)
         nmrz expr = unsafePerformIO $
           do
             mx <- execStateT `flip` (Just (expr, \_ -> return ())) $
@@ -316,11 +321,11 @@ hsc_add_builtin stg csName nArg pArgPtr resPtr fin pUData evalPtr =
     sptrUpdate `flip` stg $ applyES $ execState $
       do
         Dh.startingContext <%= DhCtx.insert name ctxBody
-        Dh.normalizer <%= \(DhC.ReifiedNormalizer nm) -> DhC.ReifiedNormalizer $ \expr ->
-            Identity $ case runIdentity $ nm expr
-              of
-                Just expr2 -> Just $ maybe expr2 id $ nmrz expr2
-                Nothing -> nmrz expr
+        Dh.normalizer <%= \others -> Just $ DhC.ReifiedNormalizer $ \expr ->
+            Identity $
+                let expr2 = DhC.normalizeWith others expr
+                  in
+                    Just $ maybe expr2 id $ nmrz expr2
 
 
 

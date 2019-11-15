@@ -77,8 +77,8 @@ int main()
     // Union
     cdhall_union* pU = malloc(CDHALL_UNION_REQUIRED_SIZE(test_union));
     cdhall_typed_ptr hU = {{CDHALL_TYPE_UNION, &test_union_spec}, pU};
-    cdhall_input("<Ts = {testI = +999, testD = 12.0} | I : Integer>", hU);
-    assert(pU->index == 1);
+    cdhall_input("<Ts : {testI : Integer, testD : Double} | I : Integer>.Ts {testI = +999, testD = 12.0}", hU);
+    assert(pU->index == 1); // Order in test_union_spec
     test_struct ts2 = ((test_union*)pU->data)->Ts;
     assert(ts2.testI == 999);
     assert(ts2.testD == 12.0);
