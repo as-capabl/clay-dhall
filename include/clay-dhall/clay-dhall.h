@@ -16,6 +16,11 @@ Dhall values are mapped directly into C memory representation described by the *
 
 \section MainpageFirstExample First Example
 \copydoc FirstExample
+
+\section MainpageConcepts Concepts
+\subsection MainpaceConceptsobjptr objptr
+`cdhall_objptr` is some allocated object. It needs cleanup with `cdhall_free_objptr`.
+`cdhall_clone_objptr` can duplicate an object. Actually this doesn't full copy but increment the reference counter. Note that all of the object that pointed by `cdhall_clone_objptr` is immutable.
 */
 
 #ifdef __cplusplus
