@@ -81,7 +81,7 @@ int main()
     ((test_union*)pU->data)->ts = (test_struct){ 2, 11.0 };
     cdhall_typed_ptr hU = {{CDHALL_TYPE_UNION, &test_union_spec}, pU};
     cdhall_objptr exprU1 = cdhall_embed(hU);
-    cdhall_objptr exprU2 = cdhall_input_expr("<Ts = {testI = +2, testD = 11.0} | I : Integer>");
+    cdhall_objptr exprU2 = cdhall_input_expr("<Ts : {testI : Integer, testD : Double} | I : Integer>.Ts {testI = +2, testD = 11.0}");
     assert(cdhall_expr_eq(exprU1, exprU2));
     cdhall_free_object(exprU1);
     cdhall_free_object(exprU2);
