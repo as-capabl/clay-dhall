@@ -13,16 +13,16 @@ jobs:
       with:
         ghc-version: '8.6.5'
         cabal-version: '3.0'
-    - name: Install dependencies
-      run: |
-        cabal update
-        cabal install --only-dependencies
     - name: Cache cabal
       id: cache-cabal
       uses: actions/cache@v1
       with:
         path: /home/runner/.cabal
         key: ${{ runner.os }}-cabal
+    - name: Install dependencies
+      run: |
+        cabal update
+        cabal install --only-dependencies
     - name: Install boost
       run: |
         git clone https://github.com/boostorg/build.git
