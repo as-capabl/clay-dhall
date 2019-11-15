@@ -17,6 +17,12 @@ jobs:
       run: |
         cabal update
         cabal install --only-dependencies
+    - name: Cache cabal
+      id: cache-cabal
+      uses: actions/cache@v1
+      with:
+        path: $HOME/.cabal
+        key: ${{ runner.os }}-cabal
     - name: Install boost
       run: |
         git clone https://github.com/boostorg/build.git
