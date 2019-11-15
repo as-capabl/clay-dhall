@@ -21,7 +21,7 @@ jobs:
       id: cache-cabal
       uses: actions/cache@v1
       with:
-        path: $HOME/.cabal
+        path: /home/runner/.cabal
         key: ${{ runner.os }}-cabal
     - name: Install boost
       run: |
