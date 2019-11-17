@@ -64,7 +64,7 @@ DLL_EXPORT const char* STDCALL cdhall_last_error_message()
     return hsc_last_error_message();
 }
 
-DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_objptr expr)
+DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_expr expr)
 {
     return hsc_show_expr_simple((HsStablePtr)expr);
 }
@@ -75,7 +75,7 @@ DLL_EXPORT bool STDCALL cdhall_input(const char* str, cdhall_typed_ptr holder)
     return hsc_input((HsPtr)str, (HsPtr)&holder) != HS_BOOL_FALSE;
 }
 
-DLL_EXPORT bool STDCALL cdhall_input_with_settings(cdhall_objptr stg, const char* str, cdhall_typed_ptr holder)
+DLL_EXPORT bool STDCALL cdhall_input_with_settings(cdhall_input_settings stg, const char* str, cdhall_typed_ptr holder)
 {
     return hsc_input_with_settings((HsStablePtr)stg, (HsPtr)str, (HsPtr)&holder) != HS_BOOL_FALSE;
 }
@@ -85,45 +85,38 @@ DLL_EXPORT bool STDCALL cdhall_input_file(const char* fileName, cdhall_typed_ptr
     return hsc_input_file((HsPtr)fileName, (HsPtr)&holder) != HS_BOOL_FALSE;
 }
 
-DLL_EXPORT bool STDCALL cdhall_input_file_with_settings(cdhall_objptr stg, const char* fileName, cdhall_typed_ptr holder)
+DLL_EXPORT bool STDCALL cdhall_input_file_with_settings(cdhall_evaluate_settings stg, const char* fileName, cdhall_typed_ptr holder)
 {
     return hsc_input_file_with_settings((HsStablePtr)stg, (HsPtr)fileName, (HsPtr)&holder) != HS_BOOL_FALSE;
 }
 
 
-DLL_EXPORT cdhall_objptr STDCALL cdhall_input_expr(const char* str)
+DLL_EXPORT cdhall_expr STDCALL cdhall_input_expr(const char* str)
 {
-    return (cdhall_objptr)hsc_input_expr((HsPtr)str);
+    return (cdhall_expr)hsc_input_expr((HsPtr)str);
 }
 
-DLL_EXPORT bool STDCALL cdhall_extract(cdhall_objptr expr, cdhall_typed_ptr holder)
+DLL_EXPORT bool STDCALL cdhall_extract(cdhall_expr expr, cdhall_typed_ptr holder)
 {
     return hsc_extract((HsStablePtr)expr, (HsPtr)&holder) != HS_BOOL_FALSE;
 }
 
-DLL_EXPORT cdhall_objptr STDCALL cdhall_embed(cdhall_typed_ptr holder)
+DLL_EXPORT cdhall_expr STDCALL cdhall_embed(cdhall_typed_ptr holder)
 {
     return hsc_embed((HsPtr)&holder);
 }
 
-DLL_EXPORT bool STDCALL cdhall_expr_eq(cdhall_objptr x, cdhall_objptr y)
+DLL_EXPORT bool STDCALL cdhall_expr_eq(cdhall_expr x, cdhall_expr y)
 {
     return hsc_expr_eq((HsStablePtr)x, (HsStablePtr)y);
 }
 
-#if 0
-DLL_EXPORT cdhall_hashval STDCALL cdhall_expr_hash(cdhall_objptr x)
-{
-    return hsc_expr_hash((HsStablePtr)x);
-}
-#endif
-
-DLL_EXPORT cdhall_objptr STDCALL cdhall_new_evaluate_settings()
+DLL_EXPORT cdhall_evaluate_settings STDCALL cdhall_new_evaluate_settings()
 {
     return hsc_new_evaluate_settings();
 }
 
-DLL_EXPORT cdhall_objptr STDCALL cdhall_new_input_settings()
+DLL_EXPORT cdhall_input_settings STDCALL cdhall_new_input_settings()
 {
     return hsc_new_input_settings();
 }
@@ -143,7 +136,7 @@ foreign export ccall hsc_add_builtin ::
     IO ()
 */
 DLL_EXPORT bool STDCALL cdhall_add_builtin(
-    cdhall_objptr* stg,
+    cdhall_has_evaluate_settings* stg,
     const char* name,
     cdhall_int nArg,
     const cdhall_type_spec* argSpecs,

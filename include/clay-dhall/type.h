@@ -139,3 +139,10 @@ typedef enum {
 // Managed objects
 //
 typedef struct cdhall_obj_ {} *cdhall_objptr; // struct is dummy; To avoid implicit conversion.
+
+typedef cdhall_objptr cdhall_funptr;
+typedef cdhall_objptr cdhall_expr;
+typedef cdhall_objptr cdhall_input_settings;
+typedef cdhall_objptr cdhall_evaluate_settings;
+typedef cdhall_objptr cdhall_has_evaluate_settings; // Either input_settings or evaluate_settings
+

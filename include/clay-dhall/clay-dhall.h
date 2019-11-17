@@ -20,7 +20,10 @@ Dhall values are mapped directly into C memory representation described by the *
 \section MainpageConcepts Concepts
 \subsection MainpaceConceptsobjptr objptr
 `cdhall_objptr` is some allocated object. It needs cleanup with `cdhall_free_objptr`.
-`cdhall_clone_objptr` can duplicate an object. Actually this doesn't full copy but increment the reference counter. Note that all of the object that pointed by `cdhall_clone_objptr` is immutable.
+`cdhall_clone_objptr` can duplicate an object. Actually this doesn't full copy but increment the reference counter.
+
+Note that all of the object that pointed by `cdhall_clone_objptr` is immutable.
+So modification functions take cdhall_clone_objptr* argument and will modify pointer address.
 */
 
 #ifdef __cplusplus
@@ -78,7 +81,7 @@ DLL_EXPORT cdhall_objptr STDCALL cdhall_clone_object(cdhall_objptr ptr);
 
 DLL_EXPORT void STDCALL cdhall_free_object(cdhall_objptr ptr);
 
-DLL_EXPORT bool STDCALL cdhall_call_func(const cdhall_objptr ptr, const void* arg, void* dest);
+DLL_EXPORT bool STDCALL cdhall_call_func(const cdhall_funptr ptr, const void* arg, void* dest);
 
 /* \} */
 
@@ -98,7 +101,7 @@ DLL_EXPORT const char* STDCALL cdhall_last_error_message();
  */
 /* \{ */
 
-DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_objptr expr);
+DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_expr expr);
 
 /* \} */
 
@@ -109,19 +112,19 @@ DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_objptr expr);
 
 DLL_EXPORT bool STDCALL cdhall_input(const char* str, cdhall_typed_ptr holder);
 
-DLL_EXPORT bool STDCALL cdhall_input_with_settings(cdhall_objptr stg, const char* str, cdhall_typed_ptr holder);
+DLL_EXPORT bool STDCALL cdhall_input_with_settings(cdhall_input_settings stg, const char* str, cdhall_typed_ptr holder);
 
 DLL_EXPORT bool STDCALL cdhall_input_file(const char* fileName, cdhall_typed_ptr holder);
 
-DLL_EXPORT bool STDCALL cdhall_input_file_with_settings(cdhall_objptr stg, const char* fileName, cdhall_typed_ptr holder);
+DLL_EXPORT bool STDCALL cdhall_input_file_with_settings(cdhall_evaluate_settings stg, const char* fileName, cdhall_typed_ptr holder);
 
-DLL_EXPORT cdhall_objptr STDCALL cdhall_input_expr(const char* str);
+DLL_EXPORT cdhall_expr STDCALL cdhall_input_expr(const char* str);
 
 // DLL_EXPORT cdhall_objptr cdhall_input_expr_with_setting(cdhall_objptr stg, const char* str);
 
-DLL_EXPORT bool STDCALL cdhall_extract(cdhall_objptr ptr, cdhall_typed_ptr holder);
+DLL_EXPORT bool STDCALL cdhall_extract(cdhall_expr ptr, cdhall_typed_ptr holder);
 
-DLL_EXPORT cdhall_objptr STDCALL cdhall_embed(cdhall_typed_ptr holder);
+DLL_EXPORT cdhall_expr STDCALL cdhall_embed(cdhall_typed_ptr holder);
 
 /* \} */
 
@@ -130,11 +133,7 @@ DLL_EXPORT cdhall_objptr STDCALL cdhall_embed(cdhall_typed_ptr holder);
 */
 /* \{ */
 
-DLL_EXPORT bool STDCALL cdhall_expr_eq(cdhall_objptr x, cdhall_objptr y);
-
-#if 0
-DLL_EXPORT cdhall_hashval cdhall_expr_hash(cdhall_objptr x);
-#endif
+DLL_EXPORT bool STDCALL cdhall_expr_eq(cdhall_expr x, cdhall_expr y);
 
 /* \} */
 
@@ -143,14 +142,14 @@ DLL_EXPORT cdhall_hashval cdhall_expr_hash(cdhall_objptr x);
  */
 /* \{ */
 
-DLL_EXPORT cdhall_objptr STDCALL cdhall_new_input_settings();
+DLL_EXPORT cdhall_input_settings STDCALL cdhall_new_input_settings();
 
-DLL_EXPORT cdhall_objptr STDCALL cdhall_new_evaluate_settings();
+DLL_EXPORT cdhall_evaluate_settings STDCALL cdhall_new_evaluate_settings();
 
 typedef cdhall_objptr (*cdhall_builtin_func)(void*, const cdhall_objptr*);
 
 DLL_EXPORT bool cdhall_add_builtin(
-    cdhall_objptr* stg,
+    cdhall_has_evaluate_settings* stg,
     const char* name,
     cdhall_int nArg,
     const cdhall_type_spec* argSpecs,
