@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 {
     assert(argc == 2);
     cdhall_init();
-    
+
     cdhall_array array;
     cdhall_typed_ptr hArray = {{CDHALL_TYPE_ARRAY, &person_t_spec}, &array};
     assert(cdhall_input_file(argv[1], hArray));
@@ -47,7 +47,9 @@ int main(int argc, char* argv[])
 
     for(int i = 0; i < array.size; ++i) free_person(aPerson + i);
     cdhall_free_array(array.elem);
-    
+
+    // TODO: Test for cdhall_set_root_directory
+
     cdhall_exit();
 
     return 0;

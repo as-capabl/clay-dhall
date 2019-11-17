@@ -121,7 +121,10 @@ DLL_EXPORT cdhall_input_settings STDCALL cdhall_new_input_settings()
     return hsc_new_input_settings();
 }
 
-
+DLL_EXPORT void STDCALL cdhall_set_root_directory(cdhall_input_settings* stg, const char* dir)
+{
+    hsc_set_root_directory((HsPtr)stg, (HsPtr) dir);
+}
 
 /*
 type BuiltinImpl = Ptr UserData -> Ptr (StablePtr Obj) -> IO (StablePtr Obj)

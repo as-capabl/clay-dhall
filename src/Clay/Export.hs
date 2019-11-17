@@ -258,6 +258,12 @@ hsc_new_evaluate_settings = newStablePtr $ evaluateSettingsToObj Dh.defaultEvalu
 foreign export ccall hsc_new_input_settings :: IO (StablePtr Obj)
 hsc_new_input_settings = newStablePtr $ inputSettingsToObj Dh.defaultInputSettings
 
+foreign export ccall hsc_set_root_directory :: Ptr (StablePtr Obj) -> CString -> IO ()
+hsc_set_root_directory stg dir =
+  do
+    sDir <- peekCString dir
+    let f obj = inputSettingsToObj $ objToInputSettings obj & Dh.rootDirectory .~ sDir
+    sptrUpdate f stg
 
 type UserData = ()
 type BuiltinImpl = Ptr UserData -> Ptr (StablePtr Obj) -> IO (StablePtr Obj)

@@ -19,11 +19,13 @@ Dhall values are mapped directly into C memory representation described by the *
 
 \section MainpageConcepts Concepts
 \subsection MainpaceConceptsobjptr objptr
-`cdhall_objptr` is some allocated object. It needs cleanup with `cdhall_free_objptr`.
-`cdhall_clone_objptr` can duplicate an object. Actually this doesn't full copy but increment the reference counter.
+`cdhall_objptr` and derived types point some allocated objects.
+They need cleanup with `cdhall_free_objptr`.
+`cdhall_clone_objptr` can duplicate an object.
+Actually this doesn't full copy but increment the reference counter.
 
 Note that all of the object that pointed by `cdhall_clone_objptr` is immutable.
-So modification functions take cdhall_clone_objptr* argument and will modify pointer address.
+So modification operations take cdhall_clone_objptr* argument and will modify pointer address.
 */
 
 #ifdef __cplusplus
@@ -145,6 +147,8 @@ DLL_EXPORT bool STDCALL cdhall_expr_eq(cdhall_expr x, cdhall_expr y);
 DLL_EXPORT cdhall_input_settings STDCALL cdhall_new_input_settings();
 
 DLL_EXPORT cdhall_evaluate_settings STDCALL cdhall_new_evaluate_settings();
+
+DLL_EXPORT void STDCALL cdhall_set_root_directory(cdhall_input_settings* stg, const char* dir);
 
 typedef cdhall_objptr (*cdhall_builtin_func)(void*, const cdhall_objptr*);
 
