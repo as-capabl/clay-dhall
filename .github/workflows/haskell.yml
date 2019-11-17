@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         cabal update
-        cabal install --only-dependencies
+        cabal install --only-dependencies --overwrite-policy=always
     - name: Install boost
       run: |
         git clone https://github.com/boostorg/build.git
