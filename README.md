@@ -109,3 +109,8 @@ $ bjam
 ### Installation for *nix
 
 Installation for production is not yet implemented.
+
+Blocked by cabal issues;
+
+- https://github.com/haskell/cabal/issues/6046
+- https://github.com/haskell/cabal/issues/6072
