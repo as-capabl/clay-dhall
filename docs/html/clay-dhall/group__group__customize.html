@@ -72,20 +72,28 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:ga0a4be9fe44a993a84778f17f08f9a1c7"><td class="memItemLeft" align="right" valign="top"><a id="ga0a4be9fe44a993a84778f17f08f9a1c7"></a>
-typedef <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a>(*&#160;</td><td class="memItemRight" valign="bottom"><b>cdhall_builtin_func</b>) (void *, const <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> *)</td></tr>
+typedef <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__customize.html#ga0a4be9fe44a993a84778f17f08f9a1c7">cdhall_builtin_func</a>) (void *, const <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> *)</td></tr>
+<tr class="memdesc:ga0a4be9fe44a993a84778f17f08f9a1c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type to point custom builtin function. <br /></td></tr>
 <tr class="separator:ga0a4be9fe44a993a84778f17f08f9a1c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gaf25470366ddd350c155669c5fb2f0300"><td class="memItemLeft" align="right" valign="top"><a id="gaf25470366ddd350c155669c5fb2f0300"></a>
-DLL_EXPORT <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> STDCALL&#160;</td><td class="memItemRight" valign="bottom"><b>cdhall_new_input_settings</b> ()</td></tr>
-<tr class="separator:gaf25470366ddd350c155669c5fb2f0300"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga03b20a54e8f8bced98c09ed03c84d2bf"><td class="memItemLeft" align="right" valign="top"><a id="ga03b20a54e8f8bced98c09ed03c84d2bf"></a>
-DLL_EXPORT <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> STDCALL&#160;</td><td class="memItemRight" valign="bottom"><b>cdhall_new_evaluate_settings</b> ()</td></tr>
-<tr class="separator:ga03b20a54e8f8bced98c09ed03c84d2bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab34fef2bc6a700db0b471ff2b32ffdbb"><td class="memItemLeft" align="right" valign="top"><a id="gab34fef2bc6a700db0b471ff2b32ffdbb"></a>
-DLL_EXPORT bool&#160;</td><td class="memItemRight" valign="bottom"><b>cdhall_add_builtin</b> (<a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> *stg, const char *name, cdhall_int nArg, const <a class="el" href="structcdhall__type__spec.html">cdhall_type_spec</a> *argSpecs, <a class="el" href="structcdhall__type__spec.html">cdhall_type_spec</a> retSpec, void(*finalizer)(void *), void *userData, cdhall_builtin_func impl)</td></tr>
-<tr class="separator:gab34fef2bc6a700db0b471ff2b32ffdbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga74675981713791c2c51147f5c349fc2f"><td class="memItemLeft" align="right" valign="top"><a id="ga74675981713791c2c51147f5c349fc2f"></a>
+DLL_EXPORT <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__customize.html#ga74675981713791c2c51147f5c349fc2f">cdhall_new_input_settings</a> ()</td></tr>
+<tr class="memdesc:ga74675981713791c2c51147f5c349fc2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an input setting object that points the default setting. <br /></td></tr>
+<tr class="separator:ga74675981713791c2c51147f5c349fc2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf3dc72b22ed81c14c18c6e58fe507764"><td class="memItemLeft" align="right" valign="top"><a id="gaf3dc72b22ed81c14c18c6e58fe507764"></a>
+DLL_EXPORT <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__customize.html#gaf3dc72b22ed81c14c18c6e58fe507764">cdhall_new_evaluate_settings</a> ()</td></tr>
+<tr class="memdesc:gaf3dc72b22ed81c14c18c6e58fe507764"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an evaluate setting object that points the default setting. <br /></td></tr>
+<tr class="separator:gaf3dc72b22ed81c14c18c6e58fe507764"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8b59b245122a40df9e929617e09025ed"><td class="memItemLeft" align="right" valign="top"><a id="ga8b59b245122a40df9e929617e09025ed"></a>
+DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__customize.html#ga8b59b245122a40df9e929617e09025ed">cdhall_set_root_directory</a> (<a class="el" href="structcdhall__obj__.html">cdhall_input_settings</a> *stg, const char *dir)</td></tr>
+<tr class="memdesc:ga8b59b245122a40df9e929617e09025ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set root directory of the evaluate setting object. <br /></td></tr>
+<tr class="separator:ga8b59b245122a40df9e929617e09025ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac6ae824aaf0f4da88a4fa55b2ab93575"><td class="memItemLeft" align="right" valign="top"><a id="gac6ae824aaf0f4da88a4fa55b2ab93575"></a>
+DLL_EXPORT bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__customize.html#gac6ae824aaf0f4da88a4fa55b2ab93575">cdhall_add_builtin</a> (<a class="el" href="structcdhall__obj__.html">cdhall_has_evaluate_settings</a> *stg, const char *name, cdhall_int nArg, const <a class="el" href="structcdhall__type__spec.html">cdhall_type_spec</a> *argSpecs, <a class="el" href="structcdhall__type__spec.html">cdhall_type_spec</a> retSpec, void(*finalizer)(void *), void *userData, <a class="el" href="group__group__customize.html#ga0a4be9fe44a993a84778f17f08f9a1c7">cdhall_builtin_func</a> impl)</td></tr>
+<tr class="memdesc:gac6ae824aaf0f4da88a4fa55b2ab93575"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add builtin function. <br /></td></tr>
+<tr class="separator:gac6ae824aaf0f4da88a4fa55b2ab93575"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <hr/>

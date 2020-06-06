@@ -1,3 +1,5 @@
+//! \file type.h
+
 #pragma once
 #include <stdint.h>
 #include <stddef.h>

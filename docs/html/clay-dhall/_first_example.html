@@ -71,7 +71,7 @@ $(function() {
 <p>clay-dhall's include file is below.</p>
 <p><div class="fragment"><div class="line">#include &lt;clay-dhall/clay-dhall.h&gt;</div><div class="line">#include &lt;clay-dhall/macro.h&gt;</div></div><!-- fragment --></p>
 <p>Call <code>cdhall_init</code> before all the other API call.</p>
-<p><div class="fragment"><div class="line">    cdhall_init(NULL, NULL);</div></div><!-- fragment --></p>
+<p><div class="fragment"><div class="line">    cdhall_init();</div></div><!-- fragment --></p>
 <p>Then let's start interpretation. In this example the resulting value is <code>Bool</code>.</p>
 <p>You should consult the table at the <a class="el" href="group__group__type__spec.html">Type spec descriptors</a> page.</p>
 <p>For the type <code>Bool</code>, you can get information below.</p>
@@ -101,8 +101,8 @@ $(function() {
 <p><div class="fragment"><div class="line">    cdhall_typed_ptr hB = {specBool, &amp;b};</div></div><!-- fragment --></p>
 <p>Now you can receive the interpreted value by passing the typed pointer to the input API.</p>
 <p><div class="fragment"><div class="line">    cdhall_input(&quot;True || False&quot;, hB);</div><div class="line">    assert(b); // b == (True || False) == True</div></div><!-- fragment --></p>
-<p>Actually, for simple type, which means whose value of <code>detail</code> is not concerned, typed pointer can be constructed immediately using a generic macro.</p>
-<p><div class="fragment"><div class="line">    </div><div class="line">    // Bool ----</div><div class="line">    bool b2;</div><div class="line">    cdhall_input(&quot;True &amp;&amp; False&quot;, CDHALL_TPTR_SIMPLE(&amp;b2));</div><div class="line">    assert(!b2);</div></div><!-- fragment --> </p>
+<p>Actually, for simple type, typed pointer can be constructed immediately using a generic macro. 'Simple type' means whose value of <code>detail</code> is not concerned.</p>
+<p><div class="fragment"><div class="line">    bool b2;</div><div class="line">    cdhall_input(&quot;True &amp;&amp; False&quot;, CDHALL_TPTR_SIMPLE(&amp;b2));</div><div class="line">    assert(!b2);</div></div><!-- fragment --> </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

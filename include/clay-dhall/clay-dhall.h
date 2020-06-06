@@ -1,3 +1,5 @@
+//! \file clay-dhall.h
+
 #pragma once
 
 /*!
@@ -79,10 +81,13 @@ DLL_EXPORT void* STDCALL cdhall_alloc_array(size_t size);
 // Used to finalize memory blocks(array, string) returned by the library.
 DLL_EXPORT void STDCALL cdhall_free_array(void* ptr);
 
+//! Clone a pointer to object.
 DLL_EXPORT cdhall_objptr STDCALL cdhall_clone_object(cdhall_objptr ptr);
 
+//! Free a pointer to object
 DLL_EXPORT void STDCALL cdhall_free_object(cdhall_objptr ptr);
 
+//! Call function
 DLL_EXPORT bool STDCALL cdhall_call_func(const cdhall_funptr ptr, const void* arg, void* dest);
 
 /* \} */
@@ -92,9 +97,12 @@ DLL_EXPORT bool STDCALL cdhall_call_func(const cdhall_funptr ptr, const void* ar
  */
 /* \{ */
 
-DLL_EXPORT cdhall_error_code STDCALL cdhall_last_error_code();
+//! Get error code of the last failured function call
+DLL_EXPORT cdhall_error_code STDCALL cdhall_last_error_code(void);
 
-DLL_EXPORT const char* STDCALL cdhall_last_error_message();
+//! Get error string of the last failured function call
+// \note The pointer to storing is valid until the next call of any clay-dhall API.
+DLL_EXPORT const char* STDCALL cdhall_last_error_message(void);
 
 /* \} */
 
@@ -103,6 +111,7 @@ DLL_EXPORT const char* STDCALL cdhall_last_error_message();
  */
 /* \{ */
 
+//! Prettyprint an expression to simple form.
 DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_expr expr);
 
 /* \} */
@@ -112,20 +121,27 @@ DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_expr expr);
  */
 /* \{ */
 
-DLL_EXPORT bool STDCALL cdhall_input(const char* str, cdhall_typed_ptr holder);
+//! Input value from dhall source string.
+DLL_EXPORT bool STDCALL cdhall_input(const char* str, cdhall_typed_ptr var);
 
+//! Input value from dhall source string.
 DLL_EXPORT bool STDCALL cdhall_input_with_settings(cdhall_input_settings stg, const char* str, cdhall_typed_ptr holder);
 
-DLL_EXPORT bool STDCALL cdhall_input_file(const char* fileName, cdhall_typed_ptr holder);
+//! Input value from dhall source file.
+DLL_EXPORT bool STDCALL cdhall_input_file(const char* fileName, cdhall_typed_ptr var);
 
+//! Input value from dhall source file.
 DLL_EXPORT bool STDCALL cdhall_input_file_with_settings(cdhall_evaluate_settings stg, const char* fileName, cdhall_typed_ptr holder);
 
+//! Input an expression from dhall source string without evaluation.
 DLL_EXPORT cdhall_expr STDCALL cdhall_input_expr(const char* str);
 
 // DLL_EXPORT cdhall_objptr cdhall_input_expr_with_setting(cdhall_objptr stg, const char* str);
 
+//! Evaluate an expression to its value.
 DLL_EXPORT bool STDCALL cdhall_extract(cdhall_expr ptr, cdhall_typed_ptr holder);
 
+//! Make an expression from its value.
 DLL_EXPORT cdhall_expr STDCALL cdhall_embed(cdhall_typed_ptr holder);
 
 /* \} */
@@ -144,14 +160,24 @@ DLL_EXPORT bool STDCALL cdhall_expr_eq(cdhall_expr x, cdhall_expr y);
  */
 /* \{ */
 
+//! Create an input setting object that points the default setting.
+DLL_EXPORT cdhall_objptr STDCALL cdhall_new_input_settings();
+
+//! Create an evaluate setting object that points the default setting.
+DLL_EXPORT cdhall_objptr STDCALL cdhall_new_evaluate_settings();
+//! Create an input setting object that points the default setting.
 DLL_EXPORT cdhall_input_settings STDCALL cdhall_new_input_settings();
 
+//! Create an evaluate setting object that points the default setting.
 DLL_EXPORT cdhall_evaluate_settings STDCALL cdhall_new_evaluate_settings();
 
+//! Set root directory of the evaluate setting object.
 DLL_EXPORT void STDCALL cdhall_set_root_directory(cdhall_input_settings* stg, const char* dir);
 
+//! Type to point custom builtin function
 typedef cdhall_objptr (*cdhall_builtin_func)(void*, const cdhall_objptr*);
 
+//! Add builtin function.
 DLL_EXPORT bool cdhall_add_builtin(
     cdhall_has_evaluate_settings* stg,
     const char* name,

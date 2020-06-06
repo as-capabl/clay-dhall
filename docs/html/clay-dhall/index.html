@@ -66,18 +66,21 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="MainpageDescription"></a>
-Description</h1>
+About clay-dhall</h1>
 <p>Dhall(<a href="https://github.com/dhall-lang/dhall-lang">https://github.com/dhall-lang/dhall-lang</a>), developed by Gabriel Gonzalez, is strictly typed, total (guaranteed to terminate, not turing complete) computer language. Dhall is a good language to describe data, configuration, and so on.</p>
 <p>This library is a C binding of Dhall, which calls the Haskell implementation of Dhall via FFI. Dhall values are mapped directly into C memory representation described by the <em>spec</em> structure.</p>
+<h1><a class="anchor" id="MainpageQuickStart"></a>
+Quick Start</h1>
+<p>(Under construction)</p>
 <h1><a class="anchor" id="MainpageFirstExample"></a>
 First Example</h1>
 <p>The tutorial of Dhall language is available here. <a href="https://hackage.haskell.org/package/dhall/docs/Dhall-Tutorial.html">https://hackage.haskell.org/package/dhall/docs/Dhall-Tutorial.html</a></p>
 <p>This documentation is about C bindings of it.</p>
 <p>As the first example, let's interpret an expression <code>True || False</code> whose expected type is <code>Bool</code></p>
 <p>clay-dhall's include file is below.</p>
-<p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;clay-dhall/clay-dhall.h&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;clay-dhall/macro.h&gt;</span></div></div><!-- fragment --></p>
+<p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="clay-dhall_8h.html">clay-dhall/clay-dhall.h</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;clay-dhall/macro.h&gt;</span></div></div><!-- fragment --></p>
 <p>Call <code>cdhall_init</code> before all the other API call.</p>
-<p><div class="fragment"><div class="line">    <a class="code" href="group__group__general.html#ga3283b3a018f69570fd22bf470fc2d85a">cdhall_init</a>(NULL, NULL);</div></div><!-- fragment --></p>
+<p><div class="fragment"><div class="line">    <a class="code" href="group__group__general.html#gac881701ca29069e181041d6030e85ac7">cdhall_init</a>();</div></div><!-- fragment --></p>
 <p>Then let's start interpretation. In this example the resulting value is <code>Bool</code>.</p>
 <p>You should consult the table at the <a class="el" href="group__group__type__spec.html">Type spec descriptors</a> page.</p>
 <p>For the type <code>Bool</code>, you can get information below.</p>
@@ -106,9 +109,15 @@ First Example</h1>
 <p>Then you can construct <code><a class="el" href="structcdhall__typed__ptr.html">cdhall_typed_ptr</a></code>, a typed pointer by putting together with the pointer to the store place and the type spec.</p>
 <p><div class="fragment"><div class="line">    <a class="code" href="structcdhall__typed__ptr.html">cdhall_typed_ptr</a> hB = {specBool, &amp;b};</div></div><!-- fragment --></p>
 <p>Now you can receive the interpreted value by passing the typed pointer to the input API.</p>
-<p><div class="fragment"><div class="line">    cdhall_input(<span class="stringliteral">&quot;True || False&quot;</span>, hB);</div><div class="line">    assert(b); <span class="comment">// b == (True || False) == True</span></div></div><!-- fragment --></p>
-<p>Actually, for simple type, which means whose value of <code>detail</code> is not concerned, typed pointer can be constructed immediately using a generic macro.</p>
-<p><div class="fragment"><div class="line">    </div><div class="line">    <span class="comment">// Bool ----</span></div><div class="line">    <span class="keywordtype">bool</span> b2;</div><div class="line">    cdhall_input(<span class="stringliteral">&quot;True &amp;&amp; False&quot;</span>, CDHALL_TPTR_SIMPLE(&amp;b2));</div><div class="line">    assert(!b2);</div></div><!-- fragment --> </p>
+<p><div class="fragment"><div class="line">    <a class="code" href="group__group__exec.html#ga81581b824e60e32562d857f155abc546">cdhall_input</a>(<span class="stringliteral">&quot;True || False&quot;</span>, hB);</div><div class="line">    assert(b); <span class="comment">// b == (True || False) == True</span></div></div><!-- fragment --></p>
+<p>Actually, for simple type, typed pointer can be constructed immediately using a generic macro. 'Simple type' means whose value of <code>detail</code> is not concerned.</p>
+<p><div class="fragment"><div class="line">    <span class="keywordtype">bool</span> b2;</div><div class="line">    <a class="code" href="group__group__exec.html#ga81581b824e60e32562d857f155abc546">cdhall_input</a>(<span class="stringliteral">&quot;True &amp;&amp; False&quot;</span>, CDHALL_TPTR_SIMPLE(&amp;b2));</div><div class="line">    assert(!b2);</div></div><!-- fragment --></p>
+<h1><a class="anchor" id="MainpageConcepts"></a>
+Concepts</h1>
+<h2><a class="anchor" id="MainpaceConceptsobjptr"></a>
+objptr</h2>
+<p><code>cdhall_objptr</code> and derived types point some allocated objects. They need cleanup with <code>cdhall_free_objptr</code>. <code>cdhall_clone_objptr</code> can duplicate an object. Actually this doesn't full copy but increment the reference counter.</p>
+<p>Note that all of the object that pointed by <code>cdhall_clone_objptr</code> is immutable. So modification operations take cdhall_clone_objptr* argument and will modify pointer address. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

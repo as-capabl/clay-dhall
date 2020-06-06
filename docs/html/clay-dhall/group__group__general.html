@@ -70,14 +70,22 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga3283b3a018f69570fd22bf470fc2d85a"><td class="memItemLeft" align="right" valign="top"><a id="ga3283b3a018f69570fd22bf470fc2d85a"></a>
-DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#ga3283b3a018f69570fd22bf470fc2d85a">cdhall_init</a> (int *argc, char **argv[])</td></tr>
-<tr class="memdesc:ga3283b3a018f69570fd22bf470fc2d85a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the library. <br /></td></tr>
-<tr class="separator:ga3283b3a018f69570fd22bf470fc2d85a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga98af0e4e58bd6484be72d5a32091cf9a"><td class="memItemLeft" align="right" valign="top"><a id="ga98af0e4e58bd6484be72d5a32091cf9a"></a>
-DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#ga98af0e4e58bd6484be72d5a32091cf9a">cdhall_exit</a> ()</td></tr>
-<tr class="memdesc:ga98af0e4e58bd6484be72d5a32091cf9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate the library. <br /></td></tr>
-<tr class="separator:ga98af0e4e58bd6484be72d5a32091cf9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac881701ca29069e181041d6030e85ac7"><td class="memItemLeft" align="right" valign="top"><a id="gac881701ca29069e181041d6030e85ac7"></a>
+DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#gac881701ca29069e181041d6030e85ac7">cdhall_init</a> (void)</td></tr>
+<tr class="memdesc:gac881701ca29069e181041d6030e85ac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the library. <br /></td></tr>
+<tr class="separator:gac881701ca29069e181041d6030e85ac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga96100d44ef7427dc091bd6e77fcf5b8e"><td class="memItemLeft" align="right" valign="top"><a id="ga96100d44ef7427dc091bd6e77fcf5b8e"></a>
+DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#ga96100d44ef7427dc091bd6e77fcf5b8e">cdhall_init_with_args</a> (int argc, char *argv[])</td></tr>
+<tr class="memdesc:ga96100d44ef7427dc091bd6e77fcf5b8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the library with GHC RTS arguments. <br /></td></tr>
+<tr class="separator:ga96100d44ef7427dc091bd6e77fcf5b8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaacee21dcff29e682731de13e711d88fa"><td class="memItemLeft" align="right" valign="top"><a id="gaacee21dcff29e682731de13e711d88fa"></a>
+DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#gaacee21dcff29e682731de13e711d88fa">cdhall_exit</a> (void)</td></tr>
+<tr class="memdesc:gaacee21dcff29e682731de13e711d88fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate the library. <br /></td></tr>
+<tr class="separator:gaacee21dcff29e682731de13e711d88fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab31e203e62fb0466bace15b4180ac210"><td class="memItemLeft" align="right" valign="top"><a id="gab31e203e62fb0466bace15b4180ac210"></a>
+DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#gab31e203e62fb0466bace15b4180ac210">cdhall_perform_gc</a> (void)</td></tr>
+<tr class="memdesc:gab31e203e62fb0466bace15b4180ac210"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform garbage collection. <br /></td></tr>
+<tr class="separator:gab31e203e62fb0466bace15b4180ac210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaaeaf8b179479d612c4a41029faaa025d"><td class="memItemLeft" align="right" valign="top"><a id="gaaeaf8b179479d612c4a41029faaa025d"></a>
 DLL_EXPORT void *STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#gaaeaf8b179479d612c4a41029faaa025d">cdhall_alloc_array</a> (size_t size)</td></tr>
 <tr class="memdesc:gaaeaf8b179479d612c4a41029faaa025d"><td class="mdescLeft">&#160;</td><td class="mdescRight">A synonym of malloc. <br /></td></tr>
@@ -88,19 +96,22 @@ DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a cl
 . <br /></td></tr>
 <tr class="separator:gad6581998618028170ddb798b5b1ea02c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga95215177d151048e14475b81e0b87c7b"><td class="memItemLeft" align="right" valign="top"><a id="ga95215177d151048e14475b81e0b87c7b"></a>
-DLL_EXPORT <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> STDCALL&#160;</td><td class="memItemRight" valign="bottom"><b>cdhall_clone_object</b> (<a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> ptr)</td></tr>
+DLL_EXPORT <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#ga95215177d151048e14475b81e0b87c7b">cdhall_clone_object</a> (<a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> ptr)</td></tr>
+<tr class="memdesc:ga95215177d151048e14475b81e0b87c7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clone a pointer to object. <br /></td></tr>
 <tr class="separator:ga95215177d151048e14475b81e0b87c7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2251962714137b4cc5679784bf1edde9"><td class="memItemLeft" align="right" valign="top"><a id="ga2251962714137b4cc5679784bf1edde9"></a>
-DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><b>cdhall_free_object</b> (<a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> ptr)</td></tr>
+DLL_EXPORT void STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#ga2251962714137b4cc5679784bf1edde9">cdhall_free_object</a> (<a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> ptr)</td></tr>
+<tr class="memdesc:ga2251962714137b4cc5679784bf1edde9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a pointer to object. <br /></td></tr>
 <tr class="separator:ga2251962714137b4cc5679784bf1edde9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab27b25181e186353a65ea756da172bca"><td class="memItemLeft" align="right" valign="top"><a id="gab27b25181e186353a65ea756da172bca"></a>
-DLL_EXPORT bool STDCALL&#160;</td><td class="memItemRight" valign="bottom"><b>cdhall_call_func</b> (const <a class="el" href="structcdhall__obj__.html">cdhall_objptr</a> ptr, const void *arg, void *dest)</td></tr>
-<tr class="separator:gab27b25181e186353a65ea756da172bca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8c2b2359a5e0f53b07726a16c491066d"><td class="memItemLeft" align="right" valign="top"><a id="ga8c2b2359a5e0f53b07726a16c491066d"></a>
+DLL_EXPORT bool STDCALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__general.html#ga8c2b2359a5e0f53b07726a16c491066d">cdhall_call_func</a> (const <a class="el" href="structcdhall__obj__.html">cdhall_funptr</a> ptr, const void *arg, void *dest)</td></tr>
+<tr class="memdesc:ga8c2b2359a5e0f53b07726a16c491066d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call function. <br /></td></tr>
+<tr class="separator:ga8c2b2359a5e0f53b07726a16c491066d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <hr/>
-<p>Call <a class="el" href="group__group__general.html#ga3283b3a018f69570fd22bf470fc2d85a">cdhall_init</a> before all the other library function's call.</p>
-<p>And call <a class="el" href="group__group__general.html#ga98af0e4e58bd6484be72d5a32091cf9a">cdhall_exit</a> after all of them. </p>
+<p>Call <a class="el" href="group__group__general.html#gac881701ca29069e181041d6030e85ac7">cdhall_init</a> before all the other library function's call.</p>
+<p>And call <a class="el" href="group__group__general.html#gaacee21dcff29e682731de13e711d88fa">cdhall_exit</a> after all of them. </p>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

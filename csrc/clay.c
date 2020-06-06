@@ -1,3 +1,5 @@
+//! \file clay.c
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -23,7 +25,6 @@ DLL_EXPORT void STDCALL cdhall_exit(void)
     hs_exit();
 }
 
-//! Perform garbage collection
 DLL_EXPORT void STDCALL cdhall_perform_gc(void)
 {
     hs_perform_gc();
@@ -54,12 +55,12 @@ DLL_EXPORT bool STDCALL cdhall_call_func(const cdhall_objptr ptr, const void* ar
     return hsc_call_func((HsStablePtr)ptr, (void*)arg, dest) != HS_BOOL_FALSE;
 }
 
-DLL_EXPORT cdhall_error_code STDCALL cdhall_last_error_code()
+DLL_EXPORT cdhall_error_code STDCALL cdhall_last_error_code(void)
 {
     return hsc_last_error_code();
 }
 
-DLL_EXPORT const char* STDCALL cdhall_last_error_message()
+DLL_EXPORT const char* STDCALL cdhall_last_error_message(void)
 {
     return hsc_last_error_message();
 }
@@ -70,24 +71,24 @@ DLL_EXPORT char* STDCALL cdhall_show_expr_simple(cdhall_expr expr)
 }
 
 
-DLL_EXPORT bool STDCALL cdhall_input(const char* str, cdhall_typed_ptr holder)
+DLL_EXPORT bool STDCALL cdhall_input(const char* str, cdhall_typed_ptr var)
 {
-    return hsc_input((HsPtr)str, (HsPtr)&holder) != HS_BOOL_FALSE;
+    return hsc_input((HsPtr)str, (HsPtr)&var) != HS_BOOL_FALSE;
 }
 
-DLL_EXPORT bool STDCALL cdhall_input_with_settings(cdhall_input_settings stg, const char* str, cdhall_typed_ptr holder)
+DLL_EXPORT bool STDCALL cdhall_input_with_settings(cdhall_input_settings stg, const char* str, cdhall_typed_ptr var)
 {
-    return hsc_input_with_settings((HsStablePtr)stg, (HsPtr)str, (HsPtr)&holder) != HS_BOOL_FALSE;
+    return hsc_input_with_settings((HsStablePtr)stg, (HsPtr)str, (HsPtr)&var) != HS_BOOL_FALSE;
 }
 
-DLL_EXPORT bool STDCALL cdhall_input_file(const char* fileName, cdhall_typed_ptr holder)
+DLL_EXPORT bool STDCALL cdhall_input_file(const char* fileName, cdhall_typed_ptr var)
 {
-    return hsc_input_file((HsPtr)fileName, (HsPtr)&holder) != HS_BOOL_FALSE;
+    return hsc_input_file((HsPtr)fileName, (HsPtr)&var) != HS_BOOL_FALSE;
 }
 
-DLL_EXPORT bool STDCALL cdhall_input_file_with_settings(cdhall_evaluate_settings stg, const char* fileName, cdhall_typed_ptr holder)
+DLL_EXPORT bool STDCALL cdhall_input_file_with_settings(cdhall_evaluate_settings stg, const char* fileName, cdhall_typed_ptr var)
 {
-    return hsc_input_file_with_settings((HsStablePtr)stg, (HsPtr)fileName, (HsPtr)&holder) != HS_BOOL_FALSE;
+    return hsc_input_file_with_settings((HsStablePtr)stg, (HsPtr)fileName, (HsPtr)&var) != HS_BOOL_FALSE;
 }
 
 
@@ -96,14 +97,14 @@ DLL_EXPORT cdhall_expr STDCALL cdhall_input_expr(const char* str)
     return (cdhall_expr)hsc_input_expr((HsPtr)str);
 }
 
-DLL_EXPORT bool STDCALL cdhall_extract(cdhall_expr expr, cdhall_typed_ptr holder)
+DLL_EXPORT bool STDCALL cdhall_extract(cdhall_expr expr, cdhall_typed_ptr var)
 {
-    return hsc_extract((HsStablePtr)expr, (HsPtr)&holder) != HS_BOOL_FALSE;
+    return hsc_extract((HsStablePtr)expr, (HsPtr)&var) != HS_BOOL_FALSE;
 }
 
-DLL_EXPORT cdhall_expr STDCALL cdhall_embed(cdhall_typed_ptr holder)
+DLL_EXPORT cdhall_expr STDCALL cdhall_embed(cdhall_typed_ptr var)
 {
-    return hsc_embed((HsPtr)&holder);
+    return hsc_embed((HsPtr)&var);
 }
 
 DLL_EXPORT bool STDCALL cdhall_expr_eq(cdhall_expr x, cdhall_expr y)
