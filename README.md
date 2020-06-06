@@ -73,11 +73,10 @@ Working toward the 1st release.
 - ns pair :: Type a -> Type b -> Type (a, b)
 - ns rawInput ::
 - [x] record :: RecordType a -> Type a
-- [ ] rootDirectory ::
+- [x] rootDirectory ::
 - [ ] scientific :: Type scientific-0.3.6.2:Data.Scientific.Scientific
 - ns Dhall.sequence :: Type a -> Type (Seq a)
 - [ ] sourceName ::
-- [ ] standardVersion ::
 - [x] startingContext ::
   - (Only through dhall_add_builtin)
 - [x]  strictText :: Type Text

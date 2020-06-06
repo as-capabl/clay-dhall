@@ -263,20 +263,17 @@ typeSpecBy CDhallTypeSpec {..}
 
         return $ CDhallTypeHolder {
             thPeek = error "Function input is not allowed",
-            thPoke = Dh.Decoder {
-                extract = \e -> Success $ \pTEFunc ->
-                  do
-                    s <- newStablePtr $ teFuncToObj $ \pArg pDest ->
-                      do
-                        argInput <- runPeekType (thPeek argSpec) pArg
-                        case Dh.extract (thPoke resultSpec) (DhC.normalize (DhC.App e (Dh.embed argInput ())))
-                          of
-                            Success o -> o pDest
-                            Failure src -> error ("Type mismatch at typeId == tFunction " ++ show src)
-                    poke (castPtr pTEFunc) s
-                    ,
-                expected = DhC.Pi "_" (Dh.expected (thPoke argSpec)) (Dh.expected (thPoke resultSpec))
-              },
+            thPoke = case thPeek argSpec
+              of
+                PeekType rd fx -> 
+                    let dec = Dh.function fx (thPoke resultSpec)
+                        appRd f = \pF -> newStablePtr (teFuncToObj $ tef f) >>= poke (castPtr pF)
+                        tef f pArg pDest =
+                          do
+                            x <- runReaderT rd pArg
+                            f x pDest
+                      in
+                        appRd <$> dec,
             thSizeOf = sizeOf (sizeDummy :: Ptr Obj)
           }
 
