@@ -148,7 +148,7 @@ hsc_input cs p =
   do
     !s <- T.decodeUtf8 <$> B.unsafePackCString cs
 
-    t <- asHolderType p
+    t <- runTPtr p
     exceptionGuard $
         join $ Dh.input t s 
 
@@ -158,7 +158,7 @@ hsc_input_with_settings spStg cs p =
     !s <- T.decodeUtf8 <$> B.unsafePackCString cs
     stg <- objToInputSettings <$> deRefStablePtr spStg
 
-    t <- asHolderType p
+    t <- runTPtr p
     exceptionGuard $
         join $ Dh.inputWithSettings stg t s 
 
@@ -168,7 +168,7 @@ hsc_input_file cs p =
     do
     !s <- T.decodeUtf8 <$> B.unsafePackCString cs
 
-    t <- asHolderType p
+    t <- runTPtr p
     exceptionGuard $
         join $ Dh.inputFile t (T.unpack s)
 
@@ -179,7 +179,7 @@ hsc_input_file_with_settings spStg cs p =
     !s <- T.decodeUtf8 <$> B.unsafePackCString cs
     stg <- objToEvaluateSettings <$> deRefStablePtr spStg
 
-    t <- asHolderType p
+    t <- runTPtr p
     exceptionGuard $
         join $ Dh.inputFileWithSettings stg t (T.unpack s)
 
@@ -196,7 +196,7 @@ hsc_extract pE p =
   do
     e <- objToExpr <$> deRefStablePtr pE
 
-    t <- asHolderType p
+    t <- runTPtr p
     case Dh.extract t e
       of
         Failure _ -> return False -- TODO: set last error
@@ -206,7 +206,7 @@ foreign export ccall hsc_embed :: Ptr CDhallTypedPtr -> IO (StablePtr Obj)
 hsc_embed p =
   do
     CDhallTypedPtr{..} <- peekTypedPtr p
-    CDhallTypeHolder{..} <- typeSpecBy =<< peek tptrSpec
+    Accessor{..} <- fromTypeSpec =<< peek tptrSpec
 
     it <- runPeekType thPeek tptrPtr
     newStablePtr . exprToObj $ Dh.embed it ()
@@ -278,8 +278,8 @@ foreign export ccall hsc_add_builtin ::
 hsc_add_builtin stg csName nArg pArgPtr resPtr fin pUData evalPtr =
   do
     !name <- T.decodeUtf8 <$> B.unsafePackCString csName
-    args <- typeSpecByN nArg pArgPtr
-    res <- typeSpecBy =<< peek resPtr
+    args <- fromTypeSpecN nArg pArgPtr
+    res <- fromTypeSpec =<< peek resPtr
     pForeign <- if pUData /= nullPtr then newForeignPtr fin pUData else newForeignPtr_ pUData
 
     let -- Context

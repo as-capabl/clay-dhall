@@ -77,18 +77,18 @@ instance Divisible f => Monoid (PeekType' f)
     mempty = PeekType (return ()) conquer
 
 --
--- Type Spec
+-- Accessor
 --
-data CDhallTypeHolder = CDhallTypeHolder {
+data Accessor = Accessor {
     thPeek :: PeekType,
     thPoke :: PokeType,
     thSizeOf :: Int
   }
 
-holderStorable ::
+accStorable ::
     forall a b. (Dh.Interpret a, Dh.Inject a, Storable b) =>
-    (a -> IO b) -> (b -> IO a) -> CDhallTypeHolder
-holderStorable store fetch = CDhallTypeHolder {..}
+    (a -> IO b) -> (b -> IO a) -> Accessor
+accStorable store fetch = Accessor {..}
   where
     storePoke x = \p -> store x >>= poke (castPtr p)
     fetchPeek = ask >>= \p -> lift (peek (castPtr p) >>= fetch)
@@ -128,8 +128,8 @@ peekAsArray elemSize (PeekType fElem ityElem) = PeekType f (injectSequence ityEl
 noPoke :: PokeFunc
 noPoke _ = return ()
 
-optionalHolder :: CDhallTypeHolder -> CDhallTypeHolder
-optionalHolder sp = CDhallTypeHolder {
+accOptional :: Accessor -> Accessor
+accOptional sp = Accessor {
     thPeek = thPeekThis (thPeek sp),
     thPoke = maybe (pokeUnion coptNone noPoke) (pokeUnion coptSome) <$> Dh.maybe (thPoke sp),
     thSizeOf = thSizeOf sp + unionOffset
@@ -143,14 +143,14 @@ optionalHolder sp = CDhallTypeHolder {
             then Just <$> runReaderT fElem unionData
             else return Nothing
 
-recordHolder :: CDhallRecordSpec -> IO CDhallTypeHolder
-recordHolder CDhallRecordSpec{..} =
+accRecord :: CDhallRecordSpec -> IO Accessor
+accRecord CDhallRecordSpec{..} =
   do
     flds <- forM [0 .. recordNumFields - 1] $ \i ->
       do
         CDhallFieldSpec {..} <- peekElemOff recordFields (fromIntegral i)
         txtName <- T.decodeUtf8 <$> B.unsafePackCString fieldName
-        sp <- typeSpecBy fieldType
+        sp <- fromTypeSpec fieldType
         let actOfs act = ReaderT $ \p -> act $ p `plusPtr` fromIntegral fieldOffset
             newPeek = case hoistPeekType (Dh.encodeFieldWith txtName) $ thPeek sp
               of
@@ -159,20 +159,20 @@ recordHolder CDhallRecordSpec{..} =
             newPoke = Dh.field txtName (actOfs <$> thPoke sp)
         return (newPeek, newPoke)
 
-    return $ CDhallTypeHolder {
+    return $ Accessor {
         thPeek = hoistPeekType Dh.recordEncoder $ mconcat (fst <$> flds),
         thPoke = Dh.record $ runReaderT <$> foldr (liftA2 (>>)) (pure $ return ()) (snd <$> flds),
         thSizeOf = fromIntegral recordByteSize
       }
 
-unionHolder :: CDhallUnionSpec -> IO CDhallTypeHolder
-unionHolder CDhallUnionSpec{..} =
+accUnion :: CDhallUnionSpec -> IO Accessor
+accUnion CDhallUnionSpec{..} =
   do
     l <- forM [0 .. unionNumItems - 1] $ \i ->
       do
         CDhallUItemSpec {..} <- peekElemOff unionItems (fromIntegral i)
         txtName <- T.decodeUtf8 <$> B.unsafePackCString uitemName
-        sp <- typeSpecBy uitemType
+        sp <- fromTypeSpec uitemType
         let newPeek = hoistPeekType (Dh.encodeConstructorWith txtName) $ thPeek sp
             newPoke = Dh.constructor txtName $ pokeUnion i <$> thPoke sp
         return (newPeek, newPoke)
@@ -186,10 +186,10 @@ unionHolder CDhallUnionSpec{..} =
             return (i, x :: ())
         coerceInputPk (i, x) = if i == 0 then Left (unsafeCoerce x) else Right (i-1, x)
         combInputPk (PeekType _ ity) rest = contramap coerceInputPk (ity Dh.>|< rest)
-        termInputPk = const (error "imposible by unionHolder") >$< unionInputVoid
+        termInputPk = const (error "imposible by accUnion") >$< unionInputVoid
         inputPk = Dh.unionEncoder $ foldr combInputPk termInputPk $ fst <$> l
 
-    return $ CDhallTypeHolder {
+    return $ Accessor {
         thPeek = PeekType readPk inputPk,
         thPoke = Dh.union (foldMap snd l),
         thSizeOf = unionOffset + fromIntegral unionByteSize
@@ -217,51 +217,51 @@ injectSequence (Dh.Encoder embedIn declaredIn) =
             | otherwise = Nothing
     declaredOut = DhC.App DhC.List declaredIn
 
-typeSpecBy :: CDhallTypeSpec -> IO CDhallTypeHolder
-typeSpecBy CDhallTypeSpec {..}
-    | typeId == tBool = return $ holderStorable
+fromTypeSpec :: CDhallTypeSpec -> IO Accessor
+fromTypeSpec CDhallTypeSpec {..}
+    | typeId == tBool = return $ accStorable
         ((\b -> return $ if b then 1 else 0) :: Bool -> IO CBool)
         (\cb -> return $ cb /= 0)
-    | typeId == tNat = return $ holderStorable
+    | typeId == tNat = return $ accStorable
         (return . fromIntegral :: Dh.Natural -> IO CDhallWord)
         (return . fromIntegral)
-    | typeId == tInt = return $ holderStorable
+    | typeId == tInt = return $ accStorable
         (return . fromIntegral :: Integer -> IO CDhallInt)
         (return . fromIntegral)
-    | typeId == tString = return $ holderStorable
+    | typeId == tString = return $ accStorable
         (allocCopyCS . T.encodeUtf8 :: T.Text -> IO CString)
         (\cs -> T.decodeUtf8 <$> B.unsafePackCString cs)
-    | typeId == tDouble = return $ holderStorable
+    | typeId == tDouble = return $ accStorable
         (return . realToFrac :: Double -> IO CDhallDouble)
         (return . realToFrac)
     | typeId == tArray =
       do
-        CDhallTypeHolder{..} <- typeSpecBy =<< peek (castPtr detail)
-        return $ CDhallTypeHolder {
+        Accessor{..} <- fromTypeSpec =<< peek (castPtr detail)
+        return $ Accessor {
             thPeek = peekAsArray thSizeOf thPeek,
             thPoke = allocAndPokeArray thSizeOf <$> Dh.vector thPoke,
             thSizeOf = sizeOf (sizeDummy :: CDhallArray)
           }
     | typeId == tUnit =
-        return $ CDhallTypeHolder {
+        return $ Accessor {
             thPeek = PeekType (return ()) Dh.inject,
             thPoke = noPoke <$ Dh.unit,
             thSizeOf = 1
           }
     | typeId == tOptional =
       do
-        sp <- typeSpecBy =<< peek (castPtr detail)
-        return $ optionalHolder sp
+        sp <- fromTypeSpec =<< peek (castPtr detail)
+        return $ accOptional sp
     | typeId == tRecord =
-        peek (castPtr detail) >>= recordHolder
+        peek (castPtr detail) >>= accRecord
     | typeId == tUnion =
-        peek (castPtr detail) >>= unionHolder
+        peek (castPtr detail) >>= accUnion
     | typeId == tFunction =
       do
-        argSpec <- typeSpecBy =<< peek (funcArgSpec detail)
-        resultSpec <- typeSpecBy =<< peek (funcResultSpec detail)
+        argSpec <- fromTypeSpec =<< peek (funcArgSpec detail)
+        resultSpec <- fromTypeSpec =<< peek (funcResultSpec detail)
 
-        return $ CDhallTypeHolder {
+        return $ Accessor {
             thPeek = error "Function input is not allowed",
             thPoke = case thPeek argSpec
               of
@@ -277,14 +277,14 @@ typeSpecBy CDhallTypeSpec {..}
             thSizeOf = sizeOf (sizeDummy :: Ptr Obj)
           }
 
-typeSpecByN :: CDhallInt -> Ptr CDhallTypeSpec -> IO (V.Vector CDhallTypeHolder)
-typeSpecByN n p = V.generateM (fromIntegral n) $ \i -> peekElemOff p i >>= typeSpecBy
+fromTypeSpecN :: CDhallInt -> Ptr CDhallTypeSpec -> IO (V.Vector Accessor)
+fromTypeSpecN n p = V.generateM (fromIntegral n) $ \i -> peekElemOff p i >>= fromTypeSpec
 
 
-asHolderType :: Ptr CDhallTypedPtr -> IO (Dh.Decoder (IO ()))
-asHolderType p =
+runTPtr :: Ptr CDhallTypedPtr -> IO (Dh.Decoder (IO ()))
+runTPtr p =
   do
     CDhallTypedPtr{..} <- peekTypedPtr p
     spec <- peek tptrSpec
-    CDhallTypeHolder{..} <- typeSpecBy spec
+    Accessor{..} <- fromTypeSpec spec
     return $ ($tptrPtr) <$> thPoke
