@@ -56,7 +56,7 @@ foreign-library clay-dhall
     , either
     , mtl
     , lens
-    , dhall == 1.27.0
+    , dhall == 1.32.0
     , prettyprinter
   build-tool-depends:
       cabal-plan:cabal-plan

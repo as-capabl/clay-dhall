@@ -60,7 +60,6 @@ exceptionGuard act =
     (act >> return True) `Ex.catches` handlers
   where
     handlers = [
-        Ex.Handler $ \e -> putE eCDHALL_ERROR_INVALID_TYPE (e :: Dh.InvalidType DhP.Src Void),
         Ex.Handler $ \e -> putE eCDHALL_ERROR_INVALID_TYPE (e :: DhTC.TypeError DhP.Src Void),
         Ex.Handler $ \e -> putE (arithErrorCode e) (e :: Ex.ArithException)
       ]

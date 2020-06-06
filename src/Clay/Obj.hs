@@ -10,9 +10,9 @@ import Foreign.Ptr
 import qualified Dhall as Dh
 import qualified Dhall.Core as DhC
 import qualified Dhall.Parser as DhP
-import qualified Dhall.TypeCheck as DhTC
 
 import Control.Lens
+import Data.Void
 
 --
 -- Type-Erased 1-argument Function
@@ -28,7 +28,7 @@ type TEFunc = TEArg -> TEDest -> IO ()
 --
 data Obj = Obj
   (# 
-    DhC.Expr DhP.Src DhTC.X |
+    DhC.Expr DhP.Src Void |
     TEFunc |
     Dh.InputSettings |
     Dh.EvaluateSettings
@@ -38,11 +38,11 @@ mismatch :: String -> a
 mismatch s = error $ "Object type mismatch: " ++ s ++ " expected."
 
 -- Expr
-objToExpr :: Obj -> DhC.Expr DhP.Src DhTC.X
+objToExpr :: Obj -> DhC.Expr DhP.Src Void
 objToExpr (Obj (# x | | | #)) = x
 objToExpr _ = mismatch "Expr"
 
-exprToObj :: (forall s. DhC.Expr DhP.Src DhTC.X) -> Obj
+exprToObj :: (forall s. DhC.Expr DhP.Src Void) -> Obj
 exprToObj x = Obj (# x | | | #)
 
 -- TEFunc

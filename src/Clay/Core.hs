@@ -54,12 +54,12 @@ import Clay.Type
 -- Peek / Poke Types
 --
 data PeekType' f = forall a. PeekType (ReaderT (Ptr ()) IO a) (f a)
-type PeekType = PeekType' Dh.InputType
+type PeekType = PeekType' Dh.Encoder
 
 type PokeFunc = Ptr () -> IO ()
-type PokeType = Dh.Type PokeFunc
+type PokeType = Dh.Decoder PokeFunc
 
-runPeekType :: PeekType -> Ptr () -> IO (Dh.InputType ())
+runPeekType :: PeekType -> Ptr () -> IO (Dh.Encoder ())
 runPeekType (PeekType rd ity) = runReaderT $
   do
     x <- rd
@@ -152,7 +152,7 @@ recordHolder CDhallRecordSpec{..} =
         txtName <- T.decodeUtf8 <$> B.unsafePackCString fieldName
         sp <- typeSpecBy fieldType
         let actOfs act = ReaderT $ \p -> act $ p `plusPtr` fromIntegral fieldOffset
-            newPeek = case hoistPeekType (Dh.inputFieldWith txtName) $ thPeek sp
+            newPeek = case hoistPeekType (Dh.encodeFieldWith txtName) $ thPeek sp
               of
                 PeekType f x ->
                     PeekType (local (`plusPtr` fromIntegral fieldOffset) f) x
@@ -160,7 +160,7 @@ recordHolder CDhallRecordSpec{..} =
         return (newPeek, newPoke)
 
     return $ CDhallTypeHolder {
-        thPeek = hoistPeekType Dh.inputRecord $ mconcat (fst <$> flds),
+        thPeek = hoistPeekType Dh.recordEncoder $ mconcat (fst <$> flds),
         thPoke = Dh.record $ runReaderT <$> foldr (liftA2 (>>)) (pure $ return ()) (snd <$> flds),
         thSizeOf = fromIntegral recordByteSize
       }
@@ -173,7 +173,7 @@ unionHolder CDhallUnionSpec{..} =
         CDhallUItemSpec {..} <- peekElemOff unionItems (fromIntegral i)
         txtName <- T.decodeUtf8 <$> B.unsafePackCString uitemName
         sp <- typeSpecBy uitemType
-        let newPeek = hoistPeekType (Dh.inputConstructorWith txtName) $ thPeek sp
+        let newPeek = hoistPeekType (Dh.encodeConstructorWith txtName) $ thPeek sp
             newPoke = Dh.constructor txtName $ pokeUnion i <$> thPoke sp
         return (newPeek, newPoke)
     let readPk = ReaderT $ \p ->
@@ -187,7 +187,7 @@ unionHolder CDhallUnionSpec{..} =
         coerceInputPk (i, x) = if i == 0 then Left (unsafeCoerce x) else Right (i-1, x)
         combInputPk (PeekType _ ity) rest = contramap coerceInputPk (ity Dh.>|< rest)
         termInputPk = const (error "imposible by unionHolder") >$< unionInputVoid
-        inputPk = Dh.inputUnion $ foldr combInputPk termInputPk $ fst <$> l
+        inputPk = Dh.unionEncoder $ foldr combInputPk termInputPk $ fst <$> l
 
     return $ CDhallTypeHolder {
         thPeek = PeekType readPk inputPk,
@@ -195,20 +195,20 @@ unionHolder CDhallUnionSpec{..} =
         thSizeOf = unionOffset + fromIntegral unionByteSize
       }
 
-unionInputVoid :: Dh.UnionInputType Void
-unionInputVoid = Dh.UnionInputType $ Pair (Const mempty) (Op absurd)
+unionInputVoid :: Dh.UnionEncoder Void
+unionInputVoid = Dh.UnionEncoder $ Pair (Const mempty) (Op absurd)
 
-injectMaybe :: Dh.InputType a -> Dh.InputType (Maybe a)
-injectMaybe (Dh.InputType embedIn declaredIn) =
-    Dh.InputType embedOut declaredOut
+injectMaybe :: Dh.Encoder a -> Dh.Encoder (Maybe a)
+injectMaybe (Dh.Encoder embedIn declaredIn) =
+    Dh.Encoder embedOut declaredOut
   where
     embedOut (Just x) = DhC.Some (embedIn x)
     embedOut Nothing = DhC.App DhC.None declaredIn
     declaredOut = DhC.App DhC.Optional declaredIn
 
-injectSequence :: Dh.InputType a -> Dh.InputType (Seq.Seq a)
-injectSequence (Dh.InputType embedIn declaredIn) =
-    Dh.InputType embedOut declaredOut
+injectSequence :: Dh.Encoder a -> Dh.Encoder (Seq.Seq a)
+injectSequence (Dh.Encoder embedIn declaredIn) =
+    Dh.Encoder embedOut declaredOut
   where
     embedOut xs = DhC.ListLit listType (fmap embedIn xs)
       where
@@ -263,7 +263,7 @@ typeSpecBy CDhallTypeSpec {..}
 
         return $ CDhallTypeHolder {
             thPeek = error "Function input is not allowed",
-            thPoke = Dh.Type {
+            thPoke = Dh.Decoder {
                 extract = \e -> Success $ \pTEFunc ->
                   do
                     s <- newStablePtr $ teFuncToObj $ \pArg pDest ->
@@ -284,7 +284,7 @@ typeSpecByN :: CDhallInt -> Ptr CDhallTypeSpec -> IO (V.Vector CDhallTypeHolder)
 typeSpecByN n p = V.generateM (fromIntegral n) $ \i -> peekElemOff p i >>= typeSpecBy
 
 
-asHolderType :: Ptr CDhallTypedPtr -> IO (Dh.Type (IO ()))
+asHolderType :: Ptr CDhallTypedPtr -> IO (Dh.Decoder (IO ()))
 asHolderType p =
   do
     CDhallTypedPtr{..} <- peekTypedPtr p
