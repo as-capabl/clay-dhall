@@ -8,7 +8,7 @@ maintainer:     as.capabl@gmail.com
 copyright:      2018 Hidenori Azuma
 license:        BSD3
 license-file:   LICENSE
-build-type:     Custom
+build-type:     Simple
 cabal-version:  2.0
 extra-source-files:
   ChangeLog.md
@@ -75,10 +75,3 @@ executable aux-list-path
     , cabal-plan
     , text
 
-custom-setup
-  setup-depends:
-      base >=4.7 && <5
-    , Cabal >= 2.0
-    , containers
-    , text
-    , filepath
