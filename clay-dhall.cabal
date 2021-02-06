@@ -27,6 +27,8 @@ foreign-library clay-dhall
     native-shared
   if os(windows)
     options: standalone
+  lib-version-info:
+      0:0:1
   hs-source-dirs:
       src
   other-modules:
@@ -58,8 +60,6 @@ foreign-library clay-dhall
     , lens
     , dhall == 1.32.0
     , prettyprinter
-  build-tool-depends:
-      cabal-plan:cabal-plan
   default-language: Haskell2010
 
 executable aux-list-path
